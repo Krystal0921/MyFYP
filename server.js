@@ -26,18 +26,21 @@ app.post('/login', async function (req, res) {
     const loginResult = await Db.login(reqJson.username, reqJson.password, reqJson.type);
 
     if(loginResult){
-      res.end(JSON.stringify({
-        "success":true,
-        "msg": "Login success",
-        "data":[]
-      }));
-
       if(reqJson.type == 'member'){
-        console.log(Db.getMember(reqJson.username))
+        res.end(JSON.stringify({
+          "success":true,
+          "msg": "Login success",
+          "data":[await Db.getMember(reqJson.username)]
+        }));
 
       }else{
-        console.log(Db.getEmployer(reqJson.username))
+        res.end(JSON.stringify({
+          "success":true,
+          "msg": "Login success",
+          "data":[await Db.getEmployer(reqJson.username)]
+        }));
       }
+       
       
     }else{
       res.end(JSON.stringify({
@@ -76,7 +79,6 @@ app.post('/register', async function (req, res) {
         "data":[]
       }));
     }
-
   }catch(e){
     res.end(JSON.stringify({
       "success":false,
