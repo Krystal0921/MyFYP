@@ -56,29 +56,34 @@ app.post('/login', async function (req, res) {
     }));
   }
 })
-// {
-//   "username":"1233",
-//   "password":"dadas",
-//   "type":"member"
-// }
 
 
-app.post('/register', async function (req, res) {
+app.post('/MemberRegister', async function (req, res) {
   try{
-    console.log("Start Register API")
+    console.log("Start Member Register API")
     const reqJson = (req.body)
-    console.log(reqJson)
     const member = reqJson
-    const registerMember = await rr.addMember(member)
+    console.log("Request : "+ JSON.stringify(member))
+    const generatedId = await rr.generateId("member"); 
+    member.mId = generatedId;   
+    const registerMember = await rr.addMember(member);   
 
     if(registerMember){
+      console.log("New member Data: " + JSON.stringify(registerMember));
       res.end(JSON.stringify({
         "success":true,
-        "msg": "register success",
+        "msg": "Member Register success",
+        "data":["mId : "+generatedId]
+      }));
+    }else{
+      res.end(JSON.stringify({
+        "success":false,
+        "msg": "Username is duplicate",
         "data":[]
       }));
     }
   }catch(e){
+    console.log("Error: " + e);
     res.end(JSON.stringify({
       "success":false,
       "msg":e,
@@ -87,6 +92,40 @@ app.post('/register', async function (req, res) {
   }
 })
 
+
+
+app.post('/EmployerRegister', async function (req, res) {
+  try{
+    console.log("Start Employer Register API")
+    const reqJson = (req.body)
+    const employer = reqJson
+    console.log("Request : "+ JSON.stringify(employer))
+    const generatedId = await rr.generateId("employer"); 
+    employer.eId = generatedId;   
+    const registerEmployer = await rr.addEmployer(employer);   
+
+    if(registerEmployer == true){
+      res.end(JSON.stringify({
+        "success":true,
+        "msg": "Employer Register success",
+        "data":["eId : "+generatedId]
+      }));
+    }else{
+      res.end(JSON.stringify({
+        "success":false,
+        "msg": registerEmployer,
+        "data":[]
+      }));
+    }
+  }catch(e){
+    console.log("Error: " + e);
+    res.end(JSON.stringify({
+      "success":false,
+      "msg":e,
+      "data":[]
+    }));
+  }
+})
 
 
 
