@@ -12,7 +12,7 @@ async function login(username, password, type) {
   }
     if (results.length > 0) {
       console.log('Username and password exist in the database');
-      return results;
+      return true;
     } else {
       console.log('Username and password do not exist in the database');
       return false;
@@ -27,7 +27,6 @@ async function getMember(username) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query('SELECT *  from project.user_member WHERE uName =? ', [username] );
-    console.log(results);
     return results;
   } catch (error) {
     console.log(`error ${error}`);
@@ -40,7 +39,6 @@ async function getEmployer(username) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query('SELECT *  from project.user_employer WHERE uName =? ', [username] );
-    console.log(results);
     return results;
   } catch (error) {
     console.log(`error ${error}`);

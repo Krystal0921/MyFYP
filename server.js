@@ -19,29 +19,27 @@ app.post('/login', async function (req, res) {
   try{
     console.log("Start Login API")
     const reqJson = (req.body)
-    console.log(reqJson)
-    console.log(reqJson.username)
-    console.log(reqJson.password)
-    console.log(reqJson.type)
+    console.log("Request :"+reqJson)
     const loginResult = await Db.login(reqJson.username, reqJson.password, reqJson.type);
 
     if(loginResult){
       if(reqJson.type == 'member'){
+        const memberData = await Db.getMember(reqJson.username);
+        console.log("Member Data: " + JSON.stringify(memberData));
         res.end(JSON.stringify({
           "success":true,
           "msg": "Login success",
-          "data":[await Db.getMember(reqJson.username)]
+          "data":[memberData]
         }));
-
       }else{
+        const employerData = await Db.getEmployer(reqJson.username);
+        console.log("Employer Data: " + JSON.stringify(employerData));
         res.end(JSON.stringify({
           "success":true,
           "msg": "Login success",
-          "data":[await Db.getEmployer(reqJson.username)]
+          "data":[employerData]
         }));
-      }
-       
-      
+      }     
     }else{
       res.end(JSON.stringify({
         "success":false,
@@ -50,6 +48,7 @@ app.post('/login', async function (req, res) {
       }));
     }
   }catch(e){
+    console.log("Error: " + e);
     res.end(JSON.stringify({
       "success":false,
       "msg":e,
