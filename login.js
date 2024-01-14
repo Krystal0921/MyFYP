@@ -7,7 +7,7 @@ async function login(username, password, type) {
   const query = util.promisify(connection.query).bind(connection);
   if(type == "member"){
     results = await query('SELECT * FROM project.user_member WHERE uName = ? AND password = ?', [username, password]);
-  }else{
+  }else if(type == "employer"){
     results = await query('SELECT * FROM project.user_employer WHERE uName = ? AND password = ?', [username, password]);
   }
     if (results.length > 0) {
