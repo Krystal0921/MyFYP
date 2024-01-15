@@ -1,16 +1,16 @@
 const connection = require('./dbConnect');
 const util = require('util');
+const r = require("./requestHandle");
 
 
 async function lessonList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query('SELECT * FROM project.lesson');
-    console.log(results);
-    return results;
+    return r.requestHandle(true, "", 0 , results)
   } catch (error) {
     console.log(`error ${error}`);
-    throw error;
+    return r.requestHandle(false, `${error}` , 1 , "")
   } 
 }
 
