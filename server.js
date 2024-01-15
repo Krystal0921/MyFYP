@@ -78,13 +78,33 @@ app.post('/Lesson', async function (req, res) {
   }
 });
 
-app.get('/Section', async function (req, res) {
-  const lessonId = 'l01';
-  const sectionId = 's01';
+app.post('/Lesson/Section', async function (req, res) {
+  try {
+    console.log("Start Section API")
+    const reqJson = (req.body)
+    const lessonId = reqJson.lessonId
+    const sectionList = await l.sectionList(lessonId)
+    console.log(sectionList)
+    res.end(JSON.stringify(sectionList))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
 
-  const quiz = await ll.quizList(lessonId, sectionId);
-  const quizAns = quiz.map(item => item.quizAns);
-  res.send(quizAns);
+app.post('/Lesson/Section/Content', async function (req, res) {
+  try {
+    console.log("Start Section Content API")
+    const reqJson = (req.body)
+    const lessonId = reqJson.lessonId
+    const sectionId = reqJson.sectionId
+    const sectionContent = await l.getSectionDetail(lessonId, sectionId)
+    console.log(sectionContent)
+    res.end(JSON.stringify(sectionContent))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
 });
 
 
