@@ -7,7 +7,6 @@ async function addMember(member) {
   try {
     let results;
     const query = util.promisify(connection.query).bind(connection);
-
     results = await query('SELECT * FROM project.user_member WHERE uName = ?', [member.uName]);
 
     if (results.length > 0) {

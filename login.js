@@ -59,5 +59,4 @@ module.exports = {
   getMember: getMember,
   getEmployer: getEmployer,
   login: login,
- 
 };

@@ -4,15 +4,15 @@ const Db = require("./login");
 const rr = require("./register");
 const l = require("./lesson");
 const e = require("./employment");
+const c = require("./chat");
+const myU = require('./utils');
 const bodyParser = require('body-parser');
 
 
 app.use(bodyParser.json());
 
 app.post('/', async function (req, res) {
-
   res.send('Hello World123');
-
 })
 
 app.post('/login', async function (req, res) {
@@ -28,7 +28,6 @@ app.post('/login', async function (req, res) {
     throw e
   }
 })
-
 
 app.post('/MemberRegister', async function (req, res) {
   try {
@@ -47,7 +46,6 @@ app.post('/MemberRegister', async function (req, res) {
   }
 })
 
-
 app.post('/EmployerRegister', async function (req, res) {
   try {
     console.log("Start Employer Register API")
@@ -64,7 +62,6 @@ app.post('/EmployerRegister', async function (req, res) {
     throw e
   }
 })
-
 
 app.post('/Lesson', async function (req, res) {
   try {
@@ -107,14 +104,192 @@ app.post('/Lesson/Section/Content', async function (req, res) {
   }
 });
 
+app.post('/CreateSection', async function (req, res) {
+  try {
+    console.log("Start Create Section API")
+    const reqJson = (req.body)
+    const section = reqJson 
+    
+    const gId = await myU.generateSectionId(section.lessonId)
+    
+    section.sectionId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(section))
 
-app.get('/employment', async function (req, res) {
+    const createSection = await l.createSection(section)
+    console.log("Data: " + JSON.stringify(createSection));
+    res.end(JSON.stringify(createSection))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
 
-  const jobList = await e.jobList()
+app.post('/CreateSectionContent', async function (req, res) {
+  try {
+    console.log("Start Create Section Content API")
+    const reqJson = (req.body)
+    const sectionContent = reqJson
+    const gId = await myU.generateContentId()
+    sectionContent.contentId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(sectionContent))
+    const createSectionContent = await l.createSectionContent(sectionContent)
+    console.log("Data: " + JSON.stringify(createSectionContent));
+    res.end(JSON.stringify(createSectionContent))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
 
-  res.end(JSON.stringify(jobList));
-
+app.post('/EditSection', async function (req, res) {
+  try {
+    console.log("Start Edit Section Content API")
+    const reqJson = (req.body)
+    const section = reqJson
+    console.log("Request : " + JSON.stringify(section))
+    const editSection = await l.editSection(section)
+    console.log("Data: " + JSON.stringify(editSection));
+    res.end(JSON.stringify(editSection))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
 });
+
+app.post('/EditSectionContent', async function (req, res) {
+  try {
+    console.log("Start Create Section Content API")
+    const reqJson = (req.body)
+    const sectionContent = reqJson
+    console.log("Request : " + JSON.stringify(sectionContent))
+    const createSectionContent = await l.createSectionContent(sectionContent)
+    console.log("Data: " + JSON.stringify(createSectionContent));
+    res.end(JSON.stringify(createSectionContent))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
+app.post('/JobList', async function (req, res) {
+  try {
+    console.log("Start Job List API")
+    const jobList = await e.jobList()
+    console.log(jobList)
+    res.end(JSON.stringify(jobList))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/SearchJob', async function (req, res) {
+  try {
+    console.log("Start Search Job  API")
+    const reqJson = (req.body)
+    const keyword = reqJson.keyword
+    const searchJob = await e.searchJob(keyword)
+    console.log(searchJob)
+    res.end(JSON.stringify(searchJob))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+
+app.post('/AddJob', async function (req, res) {
+  try {
+    console.log("Start Add Job API")
+    const reqJson = (req.body)
+    const job = reqJson 
+    const gId = await myU.generateJodId()
+    job.jId = gId
+
+    console.log("Request : " + JSON.stringify(job))
+    const addJob = await e.addJob(job)
+    console.log("Data: " + JSON.stringify(addJob));
+    res.end(JSON.stringify(addJob))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
+app.post('/ChatList', async function (req, res) {
+  try {
+    console.log("Start Chat List API")
+    const reqJson = (req.body)
+    const userId = reqJson.userId
+    const chatList = await c.chatList(userId)
+    console.log(chatList)
+    res.end(JSON.stringify(chatList))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/ChatMessage', async function (req, res) {
+  try {
+    console.log("Start Chat Message API")
+    const reqJson = (req.body)
+    const chatId = reqJson.chatId
+    const ChatMessage = await c.chatMessage(chatId)
+    console.log(ChatMessage)
+    res.end(JSON.stringify(ChatMessage))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+
+app.post('/CreateChat', async function (req, res) {
+  try {
+    console.log("Start Create Chat API")
+    const reqJson = (req.body)
+    const chat = reqJson 
+    
+    const gId = await myU.generateChatId()
+    
+    chat.chatId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(chat))
+
+    const createChat = await c.createChat(chat)
+    console.log("Data: " + JSON.stringify(createChat));
+    res.end(JSON.stringify(createChat))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
+app.post('/CreateChatMsg', async function (req, res) {
+  try {
+    console.log("Start Create Chat Msg API")
+    const reqJson = (req.body)
+    
+    const chatMsg = reqJson 
+    
+    const gId = await myU.generateChatMsgId(chatMsg.chatId)
+   
+    chatMsg.msgId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(chatMsg))
+
+    const createChatMsg = await c.createChatMsg(chatMsg)
+    console.log("Data: " + JSON.stringify(createChatMsg));
+    res.end(JSON.stringify(createChatMsg))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
 
 
 var server = app.listen(3000, function () {

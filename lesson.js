@@ -1,62 +1,114 @@
 const connection = require('./dbConnect');
 const util = require('util');
-const r = require("./requestHandle");
+const r = require('./requestHandle');
+const myU = require('./utils');
 
 
 async function lessonList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query('SELECT * FROM project.lesson');
-    return r.requestHandle(true, "", 0 , results)
+    return r.requestHandle(true, "", 0, results)
   } catch (error) {
     console.log(`error ${error}`);
-    return r.requestHandle(false, `${error}` , 1 , "")
-  } 
+    return r.requestHandle(false, `${error}`, 1, "")
+  }
 }
 
 async function sectionList(lessonId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query('SELECT * FROM project.lesson_section WHERE lessonId = ?', [lessonId]);
-    console.log(results);
-    return results;
+    return r.requestHandle(true, "", 0, results)
   } catch (error) {
     console.log(`error ${error}`);
-    throw error;
+    return r.requestHandle(false, `${error}`, 1, "")
   }
 }
 
 async function getSectionDetail(lessonId, sectionId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT ls.lessonId, ls.sectionId, ls.sectionTitle, lsc.contentId, lsc.contentType, lsc.contentData FROM project.lesson_section ls JOIN project.lesson_section_content lsc ON ls.sectionId = lsc.sectionId WHERE ls.lessonId = ? AND ls.sectionId = ?', [lessonId, sectionId]);
-    console.log(results);
-    return results;
+    const results = await query('SELECT * FROM project.lesson_section_content WHERE lessonId = ? AND sectionId = ?', [lessonId, sectionId]);
+    return r.requestHandle(true, "", 0, results)
   } catch (error) {
     console.log(`error ${error}`);
-    throw error;
+    return r.requestHandle(false, `${error}`, 1, "")
   }
 }
 
-async function quizList(lessonId, sectionId) {
+async function createSection(section) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT * FROM project.lesson_quiz WHERE lessonId = ? AND sectionId = ? ', [lessonId, sectionId]);
-    console.log(results);
-    return results;
+    check = await query('SELECT * FROM project.lesson_section WHERE lessonId = ?', [section.lessonId]);
+
+    if (check.length >= 5) {
+      return r.requestHandle(false, "Section more than 5", 1, "")
+    } else {
+      const results = await query('INSERT INTO project.lesson_section SET ?', section);
+      console.log('New Section added successfully.');
+      return r.requestHandle(true, 'New Section added successfully.', 0, section.sectionId)
+    }
   } catch (error) {
-    console.log(`error ${error}`);
-    throw error;
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 2, "")
   }
 }
 
+async function createSectionContent(sectionContent) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query('INSERT INTO project.lesson_section_content SET ?', sectionContent);
+    console.log('Create Section Content successfully.');
+    return r.requestHandle(true, "Sucess", 0 , sectionContent.contentId )
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "")
+  }
+}
 
+async function editSection(section) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query('SELECT * FROM project.lesson_section WHERE lessonId = ? AND sectionId = ?', [section.lessonId, section.sectionId]);
+    if (check.length > 0) {
+      const results = await query('UPDATE project.lesson_section SET sectionTitle = ? WHERE lessonId = ? AND sectionId = ?', [section.sectionTitle, section.lessonId, section.sectionId]);
+      console.log('Edit Section successfully.');
+      return r.requestHandle(true, "Sucess", 0, "")
+    } else {
+      return r.requestHandle(false, "Section is not exist", 1, "")
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "")
+  }
+}
 
+async function editSectionContent(sectionContent) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query('SELECT * FROM project.lesson_section_content WHERE lessonId = ? AND sectionId = ? AND contenId = ?', [section.lessonId, section.sectionId, section.contentId]);
+
+    if (check.length > 0) {
+      const results = await query('UPDATE project.lesson_section_content SET ? WHERE lessonId = ? AND sectionId = ? AND contentId = ?', [sectionContent, section.lessonId, section.sectionId, sectionContent.contentId]);
+      console.log('Edit Section Content successfully.');
+      return r.requestHandle(true, "Sucess", 0, "")
+    } else {
+      return r.requestHandle(false, "Section is not exist", 1, "")
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "")
+  }
+}
 
 
 module.exports = {
   lessonList: lessonList,
   sectionList: sectionList,
   getSectionDetail: getSectionDetail,
-  quizList: quizList
+  createSection: createSection,
+  createSectionContent: createSectionContent,
+  editSection: editSection,
+  editSectionContent: editSectionContent
 };
