@@ -102,6 +102,42 @@ async function editSectionContent(sectionContent) {
   }
 }
 
+async function updateLessonProgress(mId, lessonId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    let lessonProgressQuery = '';
+    let lessonProgressField = '';
+    
+    if (lessonId === "l01") {
+      lessonProgressQuery = 'SELECT lesson1Progress FROM project.user_member WHERE mId = ?';
+      lessonProgressField = 'lesson1Progress';
+      console.log('Fetching lesson 1 progress...');
+    } else if (lessonId === "l02") {
+      lessonProgressQuery = 'SELECT lesson2Progress FROM project.user_member WHERE mId = ?';
+      lessonProgressField = 'lesson2Progress';
+      console.log('Fetching lesson 2 progress...');
+    } else if (lessonId === "l03") {
+      lessonProgressQuery = 'SELECT lesson3Progress FROM project.user_member WHERE mId = ?';
+      lessonProgressField = 'lesson3Progress';
+      console.log('Fetching lesson 3 progress...');
+    } else {
+      return r.requestHandle(false, "lessonId incorrect", 1, "");
+    }
+    
+    const lessonProgressResults = await query(lessonProgressQuery, [mId]);
+    const lessonProgress = lessonProgressResults[0][lessonProgressField];
+    const updatedLessonProgress = lessonProgress + 20;
+    
+    const updateQuery = `UPDATE project.user_member SET ${lessonProgressField} = ? WHERE mId = ?`;
+    const updateResults = await query(updateQuery, [updatedLessonProgress, mId]);
+    
+    console.log(`Updated ${lessonProgressField} successfully.`);
+    return r.requestHandle(true, "Success", 0, (lessonProgressField + " point : " + updatedLessonProgress));
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 2, "");
+  }
+}
 
 module.exports = {
   lessonList: lessonList,
@@ -110,5 +146,6 @@ module.exports = {
   createSection: createSection,
   createSectionContent: createSectionContent,
   editSection: editSection,
-  editSectionContent: editSectionContent
+  editSectionContent: editSectionContent,
+  updateLessonProgress:updateLessonProgress
 };

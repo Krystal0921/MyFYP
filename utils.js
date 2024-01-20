@@ -135,7 +135,7 @@ async function generateApplyId(jId) {
 
     const countQuery = `SELECT COUNT(*) AS count FROM project.apply_list`
     
-    const results = await query(countQuery, [chatId]);
+    const results = await query(countQuery, [jId]);
     const existingCount = results[0].count;
 
     prefix = 'a'
@@ -147,28 +147,48 @@ async function generateApplyId(jId) {
     console.log(`Error: ${error}`);
   }
 }
-  // }else if(tableName == 'project.apply_list'){
-  //   prefix == 'a'
-  //   const paddedId = String(existingCount + 1).padStart(7, '0');
-  //     const id = `${prefix}${paddedId}`;
-  //     console.log(id);
-  //     return id;
 
 
-  // }else if(tableName == 'project.forum'){
-  //   prefix == 'p'
-  //   const paddedId = String(existingCount + 1).padStart(7, '0');
-  //     const id = `${prefix}${paddedId}`;
-  //     console.log(id);
-  //     return id;
-  // }else if(tableName == 'project.forum_comment'){
-  //   prefix == 'pc'
-  //   const paddedId = String(existingCount + 1).padStart(8, '0');
-  //     const id = `${prefix}${paddedId}`;
-  //     console.log(id);
-  //     return id;
-  // }
+async function generatePostId() {
+  try{
+  const query = util.promisify(connection.query).bind(connection);
+  let prefix
 
+    const countQuery = `SELECT COUNT(*) AS count FROM project.forum`
+    
+    const results = await query(countQuery);
+    const existingCount = results[0].count;
+
+    prefix = 'p'
+    const paddedId = String(existingCount + 1).padStart(7, '0');
+    const id = `${prefix}${paddedId}`;
+    console.log(id);
+    return id;
+  }catch(error){
+    console.log(`Error: ${error}`);
+  }
+}
+
+async function generateCommentId(postId) {
+  try{
+  const query = util.promisify(connection.query).bind(connection);
+  let prefix
+
+    const countQuery = `SELECT COUNT(*) AS count FROM project.forum_comment WHERE postId = ?`
+    
+    const results = await query(countQuery, [postId]);
+    const existingCount = results[0].count;
+
+    prefix = 'co'
+    const paddedId = String(existingCount + 1).padStart(8, '0');
+    const id = `${prefix}${paddedId}`;
+    console.log(id);
+    return id;
+  }catch(error){
+    console.log(`Error: ${error}`);
+  }
+}
+  
 
 
 module.exports = {
@@ -177,5 +197,7 @@ module.exports = {
  generateChatId:generateChatId,
  generateChatMsgId:generateChatMsgId,
  generateJodId:generateJodId,
- generateApplyId:generateApplyId
+ generateApplyId:generateApplyId,
+ generatePostId:generatePostId,
+ generateCommentId:generateCommentId
 };

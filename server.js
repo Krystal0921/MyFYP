@@ -5,6 +5,7 @@ const rr = require("./register");
 const l = require("./lesson");
 const e = require("./employment");
 const c = require("./chat");
+const f = require("./forum");
 const myU = require('./utils');
 const bodyParser = require('body-parser');
 
@@ -289,6 +290,157 @@ app.post('/CreateChatMsg', async function (req, res) {
     throw e
   }
 })
+
+
+app.post('/ApplyJob', async function (req, res) {
+  try {
+    console.log("Start Apply job API")
+    const reqJson = (req.body)
+    const applyMember = reqJson 
+    const gId = await myU.generateApplyId(applyMember.jId)
+
+    applyMember.aId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(applyMember))
+
+    const applyJob = await e.applyJob(applyMember)
+    console.log("Data: " + JSON.stringify(applyJob));
+    res.end(JSON.stringify(applyJob))
+
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
+app.post('/ApplyList', async function (req, res) {
+  try {
+    console.log("Start Apply List API")
+    const reqJson = (req.body)
+    const jId = reqJson.jId
+    const applyList = await e.applyList(jId)
+    console.log(applyList)
+    res.end(JSON.stringify(applyList))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/CreatePost', async function (req, res) {
+  try {
+    console.log("Start Create Post API")
+    const reqJson = (req.body)
+    const post = reqJson 
+    
+    const gId = await myU.generatePostId()
+    
+    post.postId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(post))
+
+    const createPost = await f.createPost(post)
+    console.log("Data: " + JSON.stringify(createPost));
+    res.end(JSON.stringify(createPost))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
+app.post('/CreateComment', async function (req, res) {
+  try {
+    console.log("Start Create Comment API")
+    const reqJson = (req.body)
+    const comment = reqJson 
+    
+    const gId = await myU.generateCommentId(comment.postId)
+    
+    comment.commentId = gId;
+    console.log(gId)
+    console.log("Request : " + JSON.stringify(comment))
+
+    const createComment = await f.createComment(comment)
+    console.log("Data: " + JSON.stringify(createComment));
+    res.end(JSON.stringify(createComment))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+})
+
+app.post('/Forum', async function (req, res) {
+  try {
+    console.log("Start Post List API")
+    const postList = await f.postList()
+    console.log(postList)
+    res.end(JSON.stringify(postList))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/PostComment', async function (req, res) {
+  try {
+    console.log("Start Comment API")
+    const reqJson = (req.body)
+    const postId = reqJson.postId
+    const getComment = await f.getComment(postId)
+    console.log(getComment)
+    res.end(JSON.stringify(getComment))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/UpdateLessonProgress', async function (req, res) {
+  try {
+    console.log("Start Update Lesson Progress API")
+    const reqJson = (req.body)
+    const lessonProgress = reqJson
+
+    const updateLessonProgress = await l.updateLessonProgress(lessonProgress.mId, lessonProgress.lessonId)
+    console.log(updateLessonProgress)
+    res.end(JSON.stringify(updateLessonProgress))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/ChangeCreatePostActive', async function (req, res) {
+  try {
+    console.log("Start Change Create Post Active API")
+    const reqJson = (req.body)
+    const mId = reqJson.mId
+    console.log("Request : " + JSON.stringify(mId))
+
+    const changeCreatePostActive = await f.changeCreatePostActive(mId)
+    console.log("Data: " + JSON.stringify(changeCreatePostActive));
+    res.end(JSON.stringify(changeCreatePostActive))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
+
+app.post('/ChangeCreateCommentActive', async function (req, res) {
+  try {
+    console.log("Start Change Create Comment Active API")
+    const reqJson = (req.body)
+    const mId = reqJson.mId
+    console.log("Request : " + JSON.stringify(mId))
+
+    const changeCreateCommentActive = await f.changeCreateCommentActive(mId)
+    console.log("Data: " + JSON.stringify(changeCreateCommentActive));
+    res.end(JSON.stringify(changeCreateCommentActive))
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e
+  }
+});
 
 
 
