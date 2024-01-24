@@ -13,7 +13,7 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
 app.post('/', async function (req, res) {
-  res.send('Hello World123');
+  res.send('test API');
 })
 
 app.post('/login', async function (req, res) {
@@ -21,39 +21,39 @@ app.post('/login', async function (req, res) {
     console.log("Start Login API")
     const reqJson = (req.body)
     console.log("Request : " + JSON.stringify(reqJson))
-    const loginResult = await Db.login(reqJson.username, reqJson.password, reqJson.type);
+    const loginResult = await Db.login(reqJson.username, reqJson.password);
     console.log("Data: " + loginResult);
-    res.end(JSON.stringify(loginResult))
+res.json(loginResult)
   } catch (e) {
     console.log("Error: " + e);
     throw e
   }
 })
 
-app.post('/MemberRegister', async function (req, res) {
+app.post('/MemberRegister', async (req, res) => {
   try {
-    console.log("Start Member Register API")
-    const reqJson = (req.body)
-    const member = reqJson
-    const generatedId = await rr.generateId("member");
-    member.mId = generatedId;
-    console.log("Request : " + JSON.stringify(member))
+    console.log("Start Member Register API");
+    const member = req.body;
+    const generatedId = await rr.generateId(2);
+    member.userId = generatedId;
+    console.log("Request: " + JSON.stringify(member));
     const registerMember = await rr.addMember(member);
+
     console.log("Data: " + registerMember);
-    res.end(JSON.stringify(registerMember))
-  } catch (e) {
-    console.log("Error: " + e);
-    throw e
+    res.json(registerMember);
+  } catch (error) {
+    console.log("Error: " + error);
+    throw error;
   }
-})
+});
 
 app.post('/EmployerRegister', async function (req, res) {
   try {
     console.log("Start Employer Register API")
     const reqJson = (req.body)
     const employer = reqJson
-    const generatedId = await rr.generateId("employer");
-    employer.eId = generatedId;
+    const generatedId = await rr.generateId(3);
+    employer.userId = generatedId;
     console.log("Request : " + JSON.stringify(employer))
     const registerEmployer = await rr.addEmployer(employer);
     console.log("Data: " + registerEmployer);

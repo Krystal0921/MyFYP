@@ -2,37 +2,52 @@ const connection = require('./dbConnect');
 const util = require('util');
 const r = require("./requestHandle");
 
-async function login(username, password, type) {
-  try {
-    let results
-    const query = util.promisify(connection.query).bind(connection);
-    if (type == "member") {
-      results = await query('SELECT * FROM project.user_member WHERE uName = ? AND password = ?', [username, password]);
-    } else if (type == "employer") {
-      results = await query('SELECT * FROM project.user_employer WHERE uName = ? AND password = ?', [username, password]);
-    } else {
-      return r.requestHandle(false,"Error Type",2,"")
-    }
 
-    if (results.length > 0) {
-      console.log('Username and password exist in the database');
-      const userData = (type === 'member') ? await getMember(username) : await getEmployer(username);
-      return  r.requestHandle(true, "Login success", 0, userData)
+async function login(username, password) {
+  try {
+    let userData;
+   
+    const query = util.promisify(connection.query).bind(connection);
+    console.log(username, password)
+    
+    checkUserType = await query('SELECT * FROM project.user WHERE uName = ? AND password = ?', [username, password]);
+
+ 
+    if (checkUserType.length > 0) {
+      const userType = checkUserType[0].userType;
+      const userId = checkUserType[0].userId;
+
+      switch (userType) {
+        case 1:
+          userData = null;
+          break;
+        case 2:
+          userData = await getCurrentMember(userId);
+          break;
+        case 3:
+          userData = await getCurrentEmployer(userId);
+          break;
+        default:
+          break;
+      }
+if(userData == false){
+  return r.requestHandle(false, "Employer not active", 1, "");
+}
+      return r.requestHandle(true, "Login success", 0, userData);
     } else {
-      console.log('Username and password do not exist in the database');
-      return r.requestHandle(false, "Username/ password incorrect ", 1, "")
+      console.log('Username / password do not exist in the database');
+      return r.requestHandle(false, "Username/password incorrect", 1, "");
     }
   } catch (error) {
     console.log(`Error: ${error}`);
-    return r.requestHandle(false, `${error}`, 3, "")
-
+    return r.requestHandle(false, `${error}`, 2, "");
   }
 }
 
-async function getMember(username) {
+async function getCurrentMember(userId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT *  from project.user_member WHERE uName =? ', [username]);
+    const results = await query('SELECT *  from project.user_member WHERE mId =? ', [userId]);
     return results
   } catch (error) {
     console.log(`error ${error}`);
@@ -41,12 +56,15 @@ async function getMember(username) {
 }
 
 
-async function getEmployer(username) {
+async function getCurrentEmployer(userId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT *  from project.user_employer WHERE uName =? ', [username]);
-    console.log(results)
-    return results
+    const results = await query('SELECT *  from project.user_employer WHERE eId =? AND active = 1', [userId]);
+    if(results.length>0){
+      return results
+    }else{
+    return false
+    }
   } catch (error) {
     console.log(`error ${error}`);
     throw error;
@@ -56,7 +74,7 @@ async function getEmployer(username) {
 
 
 module.exports = {
-  getMember: getMember,
-  getEmployer: getEmployer,
+  getCurrentMember: getCurrentMember,
+  getCurrentEmployer: getCurrentEmployer,
   login: login,
 };

@@ -7,7 +7,7 @@ const myU = require('./utils');
 async function postList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT user_member.mName, project.forum.*FROM project.user_member JOIN  project.forum ON project.user_member.mId =  project.forum.mId');
+    const results = await query('SELECT user_member.mName, project.forum.*FROM project.user_member JOIN project.forum ON project.user_member.mId =  project.forum.mId');
     return r.requestHandle(true, "", 0, results)
   } catch (error) {
     console.log(`error ${error}`);
