@@ -26,7 +26,7 @@ app.post("/login", async function (req, res) {
     // console.log("res :", res);
     const reqJson = req.body;
     console.log("Request : " + reqJson);
-    const username = reqJson.username;
+    const username = reqJson.userName;
     const password = reqJson.password;
     console.log("username :", username);
     console.log("password :", password);
