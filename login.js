@@ -62,7 +62,7 @@ async function getCurrentEmployer(userId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT    from project.user_employer WHERE eId =? AND active = 1",
+      "SELECT  * from project.user_employer WHERE eId =? AND active = 1",
       [userId]
     );
     if (results.length > 0) {
