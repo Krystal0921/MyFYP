@@ -24,7 +24,10 @@ app.post("/login", async function (req, res) {
     // console.log(reqJson.username);
     // const body =
 
-    const loginResult = await Db.login(reqJson.username, reqJson.password);
+    const loginResult = await Db.login(
+      reqJson["username"],
+      reqJson["password"]
+    );
     console.log("Data: " + JSON.stringify(loginResult));
     res.json(loginResult);
   } catch (e) {
