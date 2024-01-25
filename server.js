@@ -20,7 +20,7 @@ app.post("/login", async function (req, res) {
   try {
     console.log("Start Login API");
     const reqJson = JSON.stringify(req.body);
-    console.log("Request : " + JSON.stringify(reqJson));
+    console.log("Request : " + reqJson);
     // console.log(reqJson.username);
     // const body =
 
