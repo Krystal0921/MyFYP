@@ -53,22 +53,17 @@ async function createSection(section) {
       "SELECT * FROM project.lesson_section WHERE lessonId = ?",
       [section.lessonId]
     );
-
-    if (check.length >= 5) {
-      return r.requestHandle(false, "Section more than 5", 1, "");
-    } else {
-      const results = await query(
-        "INSERT INTO project.lesson_section SET ?",
-        section
-      );
-      console.log("New Section added successfully.");
-      return r.requestHandle(
-        true,
-        "New Section added successfully.",
-        0,
-        section.sectionId
-      );
-    }
+    const results = await query(
+      "INSERT INTO project.lesson_section SET ?",
+      section
+    );
+    console.log("New Section added successfully.");
+    return r.requestHandle(
+      true,
+      "New Section added successfully.",
+      0,
+      section.sectionId
+    );
   } catch (error) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 2, "");
@@ -78,12 +73,20 @@ async function createSection(section) {
 async function createSectionContent(sectionContent) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query(
-      "INSERT INTO project.lesson_section_content SET ?",
-      sectionContent
+    checkSection = await query(
+      "SELECT * FROM project.lesson_section WHERE lessonId = ? AND sectionId = ?",
+      [sectionContent.lessonId, sectionContent.sectionId]
     );
-    console.log("Create Section Content successfully.");
-    return r.requestHandle(true, "Sucess", 0, sectionContent.contentId);
+    if (checkSection.length > 0) {
+      const results = await query(
+        "INSERT INTO project.lesson_section_content SET ?",
+        sectionContent
+      );
+      console.log("Create Section Content successfully.");
+      return r.requestHandle(true, "Sucess", 0, sectionContent.contentId);
+    } else {
+      return r.requestHandle(false, "Section not exist", 0, "");
+    }
   } catch (error) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 1, "");
@@ -117,8 +120,12 @@ async function editSectionContent(sectionContent) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     check = await query(
-      "SELECT * FROM project.lesson_section_content WHERE lessonId = ? AND sectionId = ? AND contenId = ?",
-      [section.lessonId, section.sectionId, section.contentId]
+      "SELECT * FROM project.lesson_section_content WHERE lessonId = ? AND sectionId = ? AND contentId = ?",
+      [
+        sectionContent.lessonId,
+        sectionContent.sectionId,
+        sectionContent.contentId,
+      ]
     );
 
     if (check.length > 0) {
@@ -126,8 +133,8 @@ async function editSectionContent(sectionContent) {
         "UPDATE project.lesson_section_content SET ? WHERE lessonId = ? AND sectionId = ? AND contentId = ?",
         [
           sectionContent,
-          section.lessonId,
-          section.sectionId,
+          sectionContent.lessonId,
+          sectionContent.sectionId,
           sectionContent.contentId,
         ]
       );
@@ -145,6 +152,45 @@ async function editSectionContent(sectionContent) {
 async function updateLessonProgress(mId, lessonId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
+    let lessonProgressQuery = "";
+    let lessonProgressField = "";
+
+    if (lessonId === "l01") {
+      lessonProgressQuery =
+        "SELECT mark FROM project.member_lesson_progress WHERE mId = ? AND";
+      lessonProgressField = "lesson1Progress";
+      console.log("Fetching lesson 1 progress...");
+    } else if (lessonId === "l02") {
+      lessonProgressQuery =
+        "SELECT mark FROM project.member_lesson_progress WHERE mId = ?";
+      lessonProgressField = "lesson2Progress";
+      console.log("Fetching lesson 2 progress...");
+    } else if (lessonId === "l03") {
+      lessonProgressQuery =
+        "SELECT mark FROM project.member_lesson_progress WHERE mId = ?";
+      lessonProgressField = "lesson3Progress";
+      console.log("Fetching lesson 3 progress...");
+    } else {
+      return r.requestHandle(false, "lessonId incorrect", 1, "");
+    }
+
+    const lessonProgressResults = await query(lessonProgressQuery, [mId]);
+    const lessonProgress = lessonProgressResults[0][lessonProgressField];
+    const updatedLessonProgress = lessonProgress + 20;
+
+    const updateQuery = `UPDATE project.member_lesson_progress SET ${lessonProgressField} = ? WHERE mId = ?`;
+    const updateResults = await query(updateQuery, [
+      updatedLessonProgress,
+      mId,
+    ]);
+
+    console.log(`Updated ${lessonProgressField} successfully.`);
+    return r.requestHandle(
+      true,
+      "Success",
+      0,
+      lessonProgressField + " point : " + updatedLessonProgress
+    );
   } catch (error) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 2, "");

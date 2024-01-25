@@ -5,9 +5,9 @@ const r = require("./requestHandle");
 async function login(username, password) {
   try {
     let userData;
+    console.log(username, password);
 
     const query = util.promisify(connection.query).bind(connection);
-    console.log(username, password);
 
     checkUserType = await query(
       "SELECT * FROM project.user WHERE uName = ? AND password = ?",
