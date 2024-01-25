@@ -1,3 +1,5 @@
+// import "cors"
+var cors = require("cors");
 var express = require("express");
 var app = express();
 const Db = require("./login");
@@ -12,7 +14,7 @@ const bodyParser = require("body-parser");
 const user = require("./user");
 
 app.use(bodyParser.json());
-
+app.use(cors);
 app.post("/", async function (req, res) {
   res.send("test API");
 });
