@@ -21,6 +21,7 @@ app.post("/login", async function (req, res) {
     console.log("Start Login API");
     const reqJson = req.body;
     console.log("Request : " + JSON.stringify(reqJson));
+    console.log(reqJson.username);
 
     const loginResult = await Db.login(reqJson.username, reqJson.password);
     console.log("Data: " + JSON.stringify(loginResult));
