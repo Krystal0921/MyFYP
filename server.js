@@ -9,6 +9,7 @@ const c = require("./chat");
 const f = require("./forum");
 const myU = require("./utils");
 const bodyParser = require("body-parser");
+const user = require("./user");
 
 app.use(bodyParser.json());
 
@@ -19,15 +20,16 @@ app.post("/", async function (req, res) {
 app.post("/login", async function (req, res) {
   try {
     console.log("Start Login API");
-    const reqJson = JSON.stringify(req.body);
+    const reqJson = req.body;
     console.log("Request : " + reqJson);
+    const username = reqJson.username;
+    const password = reqJson.passowrd;
+    console.log("username :", user);
+    console.log("password :", password);
     // console.log(reqJson.username);
     // const body =
 
-    const loginResult = await Db.login(
-      reqJson["username"],
-      reqJson["password"]
-    );
+    const loginResult = await Db.login(reqJson.username, reqJson.password);
     console.log("Data: " + JSON.stringify(loginResult));
     res.json(loginResult);
   } catch (e) {
