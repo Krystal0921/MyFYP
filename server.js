@@ -19,9 +19,10 @@ app.post("/", async function (req, res) {
 app.post("/login", async function (req, res) {
   try {
     console.log("Start Login API");
-    const reqJson = req.body;
+    const reqJson = JSON.stringify(req.body);
     console.log("Request : " + JSON.stringify(reqJson));
-    console.log(reqJson.username);
+    // console.log(reqJson.username);
+    // const body =
 
     const loginResult = await Db.login(reqJson.username, reqJson.password);
     console.log("Data: " + JSON.stringify(loginResult));
