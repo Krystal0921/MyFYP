@@ -14,7 +14,7 @@ const bodyParser = require("body-parser");
 const user = require("./user");
 
 app.use(bodyParser.json());
-app.use(cors);
+app.use(cors());
 app.post("/", async function (req, res) {
   res.send("test API");
 });
@@ -26,7 +26,7 @@ app.post("/login", async function (req, res) {
     // console.log("res :", res);
     const reqJson = req.body;
     console.log("Request : " + reqJson);
-    const username = reqJson.userName;
+    const username = reqJson.username;
     const password = reqJson.password;
     console.log("username :", username);
     console.log("password :", password);
