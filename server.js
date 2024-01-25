@@ -20,12 +20,12 @@ app.post("/", async function (req, res) {
 app.post("/login", async function (req, res) {
   try {
     console.log("Start Login API");
-    console.log("req :", req);
-    console.log("res :", res);
+    // console.log("req :", req);
+    // console.log("res :", res);
     const reqJson = req.body;
     console.log("Request : " + reqJson);
     const username = reqJson.username;
-    const password = reqJson.passowrd;
+    const password = reqJson.password;
     console.log("username :", username);
     console.log("password :", password);
 
