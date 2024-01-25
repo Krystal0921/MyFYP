@@ -36,12 +36,11 @@ async function login(username, password) {
       }
       return r.requestHandle(true, "Login success", 0, userData);
     } else {
-      console.log("Username / password do not exist in the database");
-      return r.requestHandle(false, "Username/password incorrect", 1, "");
+      console.log("Username or password do not exist in the database");
+      return r.requestHandle(false, "Username or password incorrect", 1, "");
     }
   } catch (error) {
     console.log(`Error: ${error}`);
-    return r.requestHandle(false, `${error}`, 2, "");
   }
 }
 
@@ -63,7 +62,7 @@ async function getCurrentEmployer(userId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT *  from project.user_employer WHERE eId =? AND active = 1",
+      "SELECT    from project.user_employer WHERE eId =? AND active = 1",
       [userId]
     );
     if (results.length > 0) {

@@ -12,12 +12,7 @@ async function addMember(member) {
 
     if (checkUser.length > 0) {
       console.log("Username is duplicate in the database");
-      return r.requestHandle(
-        false,
-        "Username is duplicate in the database",
-        1,
-        ""
-      );
+      return r.requestHandle(false, "Username already exists", 1, "");
     } else {
       await query(
         "INSERT INTO project.user (userId, userType, uName, password) VALUES (?, ?, ?, ?)",
@@ -60,20 +55,10 @@ async function addEmployer(employer) {
 
     if (uNameResults.length > 0) {
       console.log("Username is duplicate in the database");
-      return r.requestHandle(
-        false,
-        "Username is duplicate in the database.",
-        1,
-        ""
-      );
+      return r.requestHandle(false, "Username already exists", 1, "");
     } else if (cNameResults.length > 0) {
       console.log("Company Name is duplicate in the database");
-      return r.requestHandle(
-        false,
-        "Company Name is duplicate in the database.",
-        2,
-        ""
-      );
+      return r.requestHandle(false, "Company Name already exists", 2, "");
     } else {
       await query(
         "INSERT INTO project.user (userId, userType, uName, password) VALUES (?, ?, ?, ?)",
