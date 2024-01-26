@@ -1,5 +1,4 @@
-const connection = require('./dbConnect');
-
+const connection = require("./dbConnect");
 
 function requestHandle(success, msg, code, data) {
   try {
@@ -7,21 +6,19 @@ function requestHandle(success, msg, code, data) {
       success: success,
       msg: msg,
       code: code,
-      data: data
-    }
+      data: data,
+    };
   } catch (error) {
     console.log(`error ${error}`);
     return {
       success: success,
       msg: error,
       code: code,
-      data: data
-    }
+      data: data,
+    };
   }
 }
 
-
-
 module.exports = {
-  requestHandle: requestHandle
+  requestHandle: requestHandle,
 };

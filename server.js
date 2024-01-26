@@ -107,23 +107,22 @@ app.post("/LessonProgress", async function (req, res) {
   }
 });
 
-// app.post("/UpdateLessonProgress", async function (req, res) {
-//   try {
-//     console.log("Start Update Lesson Progress API");
-//     const reqJson = req.body;
-//     const  = reqJson;
-
-//     const updateLessonProgress = await l.updateLessonProgress(
-//       lessonProgress.mId,
-//       lessonProgress.lessonId
-//     );
-//     console.log(updateLessonProgress);
-//     res.end(JSON.stringify(updateLessonProgress));
-//   } catch (e) {
-//     console.log("Error: " + e);
-//     throw e;
-//   }
-// });
+app.post("/UpdateLessonProgress", async function (req, res) {
+  try {
+    console.log("Start Update Lesson Progress API");
+    const reqJson = req.body;
+    const lessonProgress = reqJson;
+    const updateLessonProgress = await l.updateLessonProgress(
+      lessonProgress.mId,
+      lessonProgress.lessonId
+    );
+    console.log(updateLessonProgress);
+    res.json(lessonProgress);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
 
 app.post("/Lesson", async function (req, res) {
   try {
@@ -206,7 +205,7 @@ app.post("/CreateSectionContent", async function (req, res) {
 
 app.post("/EditSection", async function (req, res) {
   try {
-    console.log("Start Edit Section Content API");
+    console.log("Start Edit Section API");
     const reqJson = req.body;
     const section = reqJson;
     console.log("Request : " + JSON.stringify(section));
@@ -235,12 +234,44 @@ app.post("/EditSectionContent", async function (req, res) {
   }
 });
 
+app.post("/DeleteSection", async function (req, res) {
+  try {
+    console.log("Start Delete Section  API");
+    const reqJson = req.body;
+    const section = reqJson;
+
+    console.log("Request : " + JSON.stringify(section));
+    const editSection = await l.editSection(section);
+    console.log("Data: " + JSON.stringify(editSection));
+    res.json(editSection);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/DeleteSectionContent", async function (req, res) {
+  try {
+    console.log("Start Delete Section Content API");
+    const reqJson = req.body;
+    const sectionContent = reqJson;
+
+    console.log("Request : " + JSON.stringify(sectionContent));
+    const editSectionContent = await l.editSectionContent(sectionContent);
+    console.log("Data: " + JSON.stringify(editSectionContent));
+    res.json(editSectionContent);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 app.post("/JobList", async function (req, res) {
   try {
     console.log("Start Job List API");
     const jobList = await e.jobList();
     console.log(jobList);
-    res.end(JSON.stringify(jobList));
+    res.json(jobList);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -254,7 +285,7 @@ app.post("/SearchJob", async function (req, res) {
     const keyword = reqJson.keyword;
     const searchJob = await e.searchJob(keyword);
     console.log(searchJob);
-    res.end(JSON.stringify(searchJob));
+    res.json(searchJob);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -268,11 +299,10 @@ app.post("/AddJob", async function (req, res) {
     const job = reqJson;
     const gId = await myU.generateJodId();
     job.jId = gId;
-
     console.log("Request : " + JSON.stringify(job));
     const addJob = await e.addJob(job);
     console.log("Data: " + JSON.stringify(addJob));
-    res.end(JSON.stringify(addJob));
+    res.json(addJob);
   } catch (e) {
     console.log("Error: " + e);
     throw e;

@@ -141,7 +141,7 @@ async function editSectionContent(sectionContent) {
       console.log("Edit Section Content successfully.");
       return r.requestHandle(true, "Sucess", 0, "");
     } else {
-      return r.requestHandle(false, "Section is not exist", 1, "");
+      return r.requestHandle(false, "Section Content is not exist", 1, "");
     }
   } catch (error) {
     console.log(`Error: ${error}`);
@@ -153,22 +153,21 @@ async function updateLessonProgress(mId, lessonId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     let lessonProgressQuery = "";
-    let lessonProgressField = "";
 
     if (lessonId === "l01") {
       lessonProgressQuery =
         "SELECT mark FROM project.member_lesson_progress WHERE mId = ? AND";
-      lessonProgressField = "lesson1Progress";
+
       console.log("Fetching lesson 1 progress...");
     } else if (lessonId === "l02") {
       lessonProgressQuery =
         "SELECT mark FROM project.member_lesson_progress WHERE mId = ?";
-      lessonProgressField = "lesson2Progress";
+
       console.log("Fetching lesson 2 progress...");
     } else if (lessonId === "l03") {
       lessonProgressQuery =
         "SELECT mark FROM project.member_lesson_progress WHERE mId = ?";
-      lessonProgressField = "lesson3Progress";
+
       console.log("Fetching lesson 3 progress...");
     } else {
       return r.requestHandle(false, "lessonId incorrect", 1, "");
@@ -178,22 +177,74 @@ async function updateLessonProgress(mId, lessonId) {
     const lessonProgress = lessonProgressResults[0][lessonProgressField];
     const updatedLessonProgress = lessonProgress + 20;
 
-    const updateQuery = `UPDATE project.member_lesson_progress SET ${lessonProgressField} = ? WHERE mId = ?`;
+    const updateQuery = `UPDATE project.member_lesson_progress SET mark = ? WHERE mId = ?`;
     const updateResults = await query(updateQuery, [
       updatedLessonProgress,
       mId,
     ]);
 
-    console.log(`Updated ${lessonProgressField} successfully.`);
+    console.log(`Updated Lesson Progress successfully.`);
     return r.requestHandle(
       true,
       "Success",
       0,
-      lessonProgressField + " point : " + updatedLessonProgress
+      "Mark point : " + updatedLessonProgress
     );
   } catch (error) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 2, "");
+  }
+}
+
+async function editSection(section) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query(
+      "SELECT * FROM project.lesson_section WHERE lessonId = ? AND sectionId = ?",
+      [section.lessonId, section.sectionId]
+    );
+    if (check.length > 0) {
+      const results = await query(
+        "DELETE FROM project.lesson_section  WHERE lessonId=? AND AND sectionId = ? ;"[
+          (section.lessonId, section.sectionId)
+        ]
+      );
+      console.log("Delete Section successfully.");
+      return r.requestHandle(true, "Sucess", 0, "");
+    } else {
+      return r.requestHandle(false, "Section is not exist", 1, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
+async function editSectionContent(sectionContent) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query(
+      "SELECT * FROM lesson_section_content WHERE lessonId = ? AND sectionId = ? AND contentId = ?",
+      [
+        sectionContent.lessonId,
+        sectionContent.sectionId,
+        sectionContent.contentId,
+      ]
+    );
+    if (check.length > 0) {
+      const results = await query(
+        "DELETE FROM lesson_section_content   WHERE lessonId=? AND AND sectionId = ? AND contentId = ? ;"[
+          (section.lessonId, section.sectionId, sectionContent.contentId)
+        ]
+      );
+      console.log("Delete Section Content successfully.");
+      return r.requestHandle(true, "Sucess", 0, "");
+    } else {
+      return r.requestHandle(false, "Section Content is not exist", 1, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
   }
 }
 
@@ -206,4 +257,6 @@ module.exports = {
   editSection: editSection,
   editSectionContent: editSectionContent,
   updateLessonProgress: updateLessonProgress,
+  editSection: editSection,
+  editSectionContent: editSectionContent,
 };
