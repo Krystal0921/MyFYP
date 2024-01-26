@@ -390,10 +390,9 @@ app.post("/ApplyJob", async function (req, res) {
     applyMember.aId = gId;
     console.log(gId);
     console.log("Request : " + JSON.stringify(applyMember));
-
     const applyJob = await e.applyJob(applyMember);
     console.log("Data: " + JSON.stringify(applyJob));
-    res.end(JSON.stringify(applyJob));
+    res.json(applyJob);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -407,7 +406,21 @@ app.post("/ApplyList", async function (req, res) {
     const jId = reqJson.jId;
     const applyList = await e.applyList(jId);
     console.log(applyList);
-    res.end(JSON.stringify(applyList));
+    res.json(applyList);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/CompanyJob", async function (req, res) {
+  try {
+    console.log("Start Company Job API");
+    const reqJson = req.body;
+    const eId = reqJson.eId;
+    const getCompanyJobList = await e.getCompanyJobList(eId);
+    console.log(getCompanyJobList);
+    res.json(getCompanyJobList);
   } catch (e) {
     console.log("Error: " + e);
     throw e;

@@ -1,73 +1,128 @@
-const connection = require('./dbConnect');
-const util = require('util');
-const r = require('./requestHandle');
-
+const connection = require("./dbConnect");
+const util = require("util");
+const r = require("./requestHandle");
 
 async function jobList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT * FROM project.employment');
-    return r.requestHandle(true, "", 0,results )
+    const results = await query("SELECT * FROM project.employment");
+    return r.requestHandle(true, "", 0, results);
   } catch (error) {
     console.log(`error ${error}`);
-    return r.requestHandle(false, error, 1,"" )
-  } 
+    return r.requestHandle(false, error, 1, "");
+  }
 }
 
 async function searchJob(keyword) {
   try {
     const query = util.promisify(connection.query).bind(connection);
 
-    const results = await query('SELECT * FROM project.employment WHERE jobTitle LIKE ? OR location LIKE ?',['%' + keyword + '%', '%' + keyword + '%']);
-    if(results.length>0){
-    return r.requestHandle(true, "", 0,results )
-    }else{
-      return r.requestHandle(false, "no result", 1,"" )
+    const results = await query(
+      "SELECT * FROM project.employment WHERE jobTitle LIKE ? OR location LIKE ?",
+      ["%" + keyword + "%", "%" + keyword + "%"]
+    );
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, results);
+    } else {
+      return r.requestHandle(false, "no result", 1, "");
     }
   } catch (error) {
     console.log(`error ${error}`);
-    return r.requestHandle(false, "", 0, )
-  } 
+    return r.requestHandle(false, "", 0);
+  }
 }
 
 async function addJob(job) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-      const results = await query('INSERT INTO project.employment SET ?', job);
-      console.log('New Section added successfully.');
-      return r.requestHandle(true, 'New job added successfully.', 0, "jId : " +job.jId )
+    const results = await query("INSERT INTO project.employment SET ?", job);
+    console.log("New Section added successfully.");
+    return r.requestHandle(
+      true,
+      "New job added successfully.",
+      0,
+      "jId : " + job.jId
+    );
   } catch (error) {
     console.log(`Error: ${error}`);
-    return r.requestHandle(false, `${error}`, 1, "")
+    return r.requestHandle(false, `${error}`, 1, "");
   }
 }
 
 async function applyJob(member) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-      const results = await query('INSERT INTO project.apply_list SET ?', member);
-      console.log('apply job successfully.');
-      return r.requestHandle(true, 'successfully.', 0, "aId : " +member.aId )
+    const checkJobExist = await query(
+      "SELECT * FROM project.employment WHERE jId = ? ",
+      member.jId
+    );
+
+    const checkUser = await query(
+      "SELECT * FROM project.apply_list WHERE jId =? AND mId =? ",
+      [member.jId, member.mId]
+    );
+    if (checkUser.length > 0) {
+      return r.requestHandle(false, "You are already apply.", 0, "");
+    } else {
+      if (checkJobExist.length > 0) {
+        const results = await query(
+          "INSERT INTO project.apply_list SET ?",
+          member
+        );
+        console.log("apply job successfully.");
+        return r.requestHandle(
+          true,
+          "apply job successfully.",
+          0,
+          "aId : " + member.aId
+        );
+      } else {
+        return r.requestHandle(false, "job no exist.", 1, "");
+      }
+    }
   } catch (error) {
     console.log(`Error: ${error}`);
-    return r.requestHandle(false, `${error}`, 1, "")
+    return r.requestHandle(false, `${error}`, 2, "");
+  }
+}
+
+async function getCompanyJobList(eId) {
+  console.log(eId);
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    let companyJobList = await query(
+      "SELECT jId , jobTitle , createAt FROM project.employment WHERE eId = ? ORDER BY createAt DESC",
+      [eId]
+    );
+
+    if (companyJobList.length > 0) {
+      return r.requestHandle(true, "", 0, companyJobList);
+    } else {
+      return r.requestHandle(false, "No Job create", 1, "");
+    }
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, error, 2, "");
   }
 }
 
 async function applyList(jId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query('SELECT  user_member.mName, user_member.mId FROM project.user_member JOIN project.apply_list ON user_member.mId = apply_list.mId WHERE apply_list.jId = ?' , [jId]);
+    const results = await query(
+      "SELECT user_member.mId,  user_member.mName, apply_list.application_date FROM project.user_member JOIN project.apply_list ON user_member.mId = apply_list.mId WHERE apply_list.jId = ? ORDER BY application_date DESC",
+      [jId]
+    );
 
-    if(results.length >0){
-    return r.requestHandle(true, "", 0,results )
-    }else{
-      return r.requestHandle(false, "no one apply", 1,results )
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, results);
+    } else {
+      return r.requestHandle(false, "no one apply", 1, results);
     }
   } catch (error) {
     console.log(`error ${error}`);
-    return r.requestHandle(false, error, 2,"" )
-  } 
+    return r.requestHandle(false, error, 2, "");
+  }
 }
 
 module.exports = {
@@ -75,5 +130,6 @@ module.exports = {
   searchJob: searchJob,
   addJob: addJob,
   applyJob: applyJob,
-  applyList:applyList
+  applyList: applyList,
+  getCompanyJobList: getCompanyJobList,
 };
