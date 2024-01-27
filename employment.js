@@ -91,7 +91,7 @@ async function getCompanyJobList(eId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     let companyJobList = await query(
-      "SELECT pe.jId, pe.jobTitle, pe.createAt, ue.cPhoto FROM project.employment AS pe JOIN user_employer AS ue ON pe.eId = ue.eId WHERE pe.eId = ? ORDER BY pe.createAt DESC",
+      "SELECT pe.jId, pe.jobTitle, pe.createAt,pe.description, ue.cPhoto FROM project.employment AS pe JOIN user_employer AS ue ON pe.eId = ue.eId WHERE pe.eId = ? ORDER BY pe.createAt DESC",
       [eId]
     );
 
