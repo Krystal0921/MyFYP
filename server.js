@@ -427,6 +427,20 @@ app.post("/CompanyJob", async function (req, res) {
   }
 });
 
+app.post("/JobDetail", async function (req, res) {
+  try {
+    console.log("Start Job Detail API");
+    const reqJson = req.body;
+    const jId = reqJson.jId;
+    const jobDetail = await e.jobDetail(jId);
+    console.log(jobDetail);
+    res.json(jobDetail);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 app.post("/CreatePost", async function (req, res) {
   try {
     console.log("Start Create Post API");

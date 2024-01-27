@@ -12,6 +12,24 @@ async function jobList() {
     return r.requestHandle(false, error, 1, "");
   }
 }
+async function jobDetail(jId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      "SELECT * FROM project.employment WHERE jId = ?",
+      [jId] // Pass jId as an array to bind the parameter securely
+    );
+
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, results);
+    } else {
+      return r.requestHandle(false, "No data found", 1, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, error.message, 1, "");
+  }
+}
 
 async function searchJob(keyword) {
   try {
@@ -132,4 +150,5 @@ module.exports = {
   applyJob: applyJob,
   applyList: applyList,
   getCompanyJobList: getCompanyJobList,
+  jobDetail: jobDetail,
 };
