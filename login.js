@@ -32,12 +32,17 @@ async function login(username, password) {
           break;
       }
       if (userData == false) {
-        return r.requestHandle(false, "Employer not active", 1, "");
+        return r.requestHandle(
+          false,
+          "Account not activated. Please wait for admin approval",
+          1,
+          ""
+        );
       }
       return r.requestHandle(true, "Login success", 0, userData);
     } else {
       console.log("Username or password do not exist in the database");
-      return r.requestHandle(false, "Username or password incorrect", 1, "");
+      return r.requestHandle(false, "Username or password incorrect", 2, "");
     }
   } catch (error) {
     console.log(`Error: ${error}`);
