@@ -5,7 +5,9 @@ const r = require("./requestHandle");
 async function jobList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query("SELECT * FROM project.employment");
+    const results = await query(
+      "SELECT employment.*, user_employer.cPhoto FROM project.employment JOIN project.user_employer ON user_employer.eId = employment.eId ORDER BY employment.createAt DESC"
+    );
     return r.requestHandle(true, "", 0, results);
   } catch (error) {
     console.log(`error ${error}`);

@@ -42,7 +42,12 @@ async function login(username, password) {
       return r.requestHandle(true, "Login success", 0, userData);
     } else {
       console.log("Username or password do not exist in the database");
-      return r.requestHandle(false, "Username or password incorrect", 2, "");
+      return r.requestHandle(
+        false,
+        "Invalid username or password. Please try again",
+        2,
+        ""
+      );
     }
   } catch (error) {
     console.log(`Error: ${error}`);
