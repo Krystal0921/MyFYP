@@ -70,7 +70,7 @@ async function addEmployer(employer) {
           employer.cContact,
           employer.cAddress,
           employer.cNumber,
-          photoName,
+          employer.cPhoto,
           0,
         ]
       );
