@@ -60,7 +60,12 @@ async function addEmployer(employer) {
       console.log("Company Name is duplicate in the database");
       return r.requestHandle(false, "Company Name already exists", 2, "");
     } else {
-      const insert = await query(
+      await query(
+        "INSERT INTO project.user (userId, userType, uName, password) VALUES (?, ?, ?, ?)",
+        [employer.userId, 3, employer.uName, employer.password]
+      );
+
+      await query(
         "INSERT INTO project.user_employer (eId, eName, eEmail, cName, cContact, cAddress, cNumber, cPhoto, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
           employer.userId,
@@ -73,11 +78,6 @@ async function addEmployer(employer) {
           employer.cPhoto,
           0,
         ]
-      );
-
-      await query(
-        "INSERT INTO project.user (userId, userType, uName, password) VALUES (?, ?, ?, ?)",
-        [employer.userId, 3, employer.uName, employer.password]
       );
 
       console.log("New employer added.");
