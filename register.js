@@ -74,12 +74,12 @@ async function addEmployer(employer) {
           0,
         ]
       );
-      if (insert.length > 0) {
-        await query(
-          "INSERT INTO project.user (userId, userType, uName, password) VALUES (?, ?, ?, ?)",
-          [employer.userId, 3, employer.uName, employer.password]
-        );
-      }
+
+      await query(
+        "INSERT INTO project.user (userId, userType, uName, password) VALUES (?, ?, ?, ?)",
+        [employer.userId, 3, employer.uName, employer.password]
+      );
+
       console.log("New employer added.");
       return r.requestHandle(true, "New employer added.", 0, "");
     }
