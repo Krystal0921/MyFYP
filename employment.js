@@ -92,7 +92,7 @@ async function applyJob(member) {
         console.log("apply job successfully.");
         return r.requestHandle(
           true,
-          "apply job successfully.",
+          "Thank you for applying for the job. Please wait for the employer to contact you..",
           0,
           "aId : " + member.aId
         );

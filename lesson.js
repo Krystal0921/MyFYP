@@ -196,7 +196,7 @@ async function updateLessonProgress(mId, lessonId) {
   }
 }
 
-async function editSection(section) {
+async function deleteSection(section) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     check = await query(
@@ -220,7 +220,7 @@ async function editSection(section) {
   }
 }
 
-async function editSectionContent(sectionContent) {
+async function deleteSectionContent(sectionContent) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     check = await query(
@@ -257,6 +257,6 @@ module.exports = {
   editSection: editSection,
   editSectionContent: editSectionContent,
   updateLessonProgress: updateLessonProgress,
-  editSection: editSection,
-  editSectionContent: editSectionContent,
+  deleteSection: deleteSection,
+  deleteSectionContent: deleteSectionContent,
 };

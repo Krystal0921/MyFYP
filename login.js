@@ -20,7 +20,7 @@ async function login(username, password) {
 
       switch (userType) {
         case 1:
-          userData = null;
+          userData = "admin";
           break;
         case 2:
           userData = await getCurrentMember(userId);

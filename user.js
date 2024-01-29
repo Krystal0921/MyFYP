@@ -38,8 +38,31 @@ async function getMemberLessonProgress(mId, lessonId) {
   }
 }
 
+async function changeEmployerActive(eId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query("SELECT * FROM project.user_employer WHERE eId = ? ", [
+      eId,
+    ]);
+    if (check.length > 0) {
+      results = await query(
+        "UPDATE project.user_employer SET active = ? WHERE mId = ?",
+        [1, eId]
+      );
+      console.log("Update employer active to 1");
+      return r.requestHandle(true, "Update employer active ", 0, "");
+    } else {
+      return r.requestHandle(false, "Can not Update employer", 0, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
 module.exports = {
   getMember: getMember,
   getEmployer: getEmployer,
   getMemberLessonProgress: getMemberLessonProgress,
+  changeEmployerActive: changeEmployerActive,
 };

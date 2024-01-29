@@ -49,7 +49,7 @@ app.post("/MemberInformation", async function (req, res) {
 app.post("/EmployerInformation", async function (req, res) {
   try {
     console.log("Start Employer Information API");
-    const employerInfo = await u.getEmployer();
+    const employerInfo = await user.getEmployer();
     console.log("Data: " + JSON.stringify(employerInfo));
     res.json(employerInfo);
   } catch (e) {
@@ -66,7 +66,6 @@ app.post("/MemberRegister", async (req, res) => {
     member.userId = generatedId;
     console.log("Request: " + JSON.stringify(member));
     const registerMember = await rr.addMember(member);
-
     console.log("Data: " + JSON.stringify(registerMember));
     res.json(registerMember);
   } catch (error) {
@@ -172,12 +171,9 @@ app.post("/CreateSection", async function (req, res) {
     const section = reqJson;
     const gId = await myU.generateSectionId(section.lessonId);
     section.sectionId = gId;
-
     console.log("Request : " + JSON.stringify(section));
     const createSection = await l.createSection(section);
-
     console.log("Data: " + JSON.stringify(createSection));
-
     res.json(createSection);
   } catch (e) {
     console.log("Error: " + e);
@@ -227,7 +223,6 @@ app.post("/EditSectionContent", async function (req, res) {
     const editSectionContent = await l.editSectionContent(sectionContent);
     console.log("Data: " + JSON.stringify(editSectionContent));
     res.json(editSectionContent);
-    res.end(JSON.stringify(editSectionContent));
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -239,11 +234,10 @@ app.post("/DeleteSection", async function (req, res) {
     console.log("Start Delete Section  API");
     const reqJson = req.body;
     const section = reqJson;
-
     console.log("Request : " + JSON.stringify(section));
-    const editSection = await l.editSection(section);
-    console.log("Data: " + JSON.stringify(editSection));
-    res.json(editSection);
+    const deleteSection = await l.deleteSection(section);
+    console.log("Data: " + JSON.stringify(deleteSection));
+    res.json(deleteSection);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -257,9 +251,9 @@ app.post("/DeleteSectionContent", async function (req, res) {
     const sectionContent = reqJson;
 
     console.log("Request : " + JSON.stringify(sectionContent));
-    const editSectionContent = await l.editSectionContent(sectionContent);
-    console.log("Data: " + JSON.stringify(editSectionContent));
-    res.json(editSectionContent);
+    const deleteSectionContent = await l.deleteSectionContent(sectionContent);
+    console.log("Data: " + JSON.stringify(deleteSectionContent));
+    res.json(deleteSectionContent);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -316,7 +310,7 @@ app.post("/ChatList", async function (req, res) {
     const userId = reqJson.userId;
     const chatList = await c.chatList(userId);
     console.log(chatList);
-    res.end(JSON.stringify(chatList));
+    res.json(chatList);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -330,7 +324,7 @@ app.post("/ChatMessage", async function (req, res) {
     const chatId = reqJson.chatId;
     const ChatMessage = await c.chatMessage(chatId);
     console.log(ChatMessage);
-    res.end(JSON.stringify(ChatMessage));
+    res.json(ChatMessage);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -342,16 +336,13 @@ app.post("/CreateChat", async function (req, res) {
     console.log("Start Create Chat API");
     const reqJson = req.body;
     const chat = reqJson;
-
     const gId = await myU.generateChatId();
-
     chat.chatId = gId;
     console.log(gId);
     console.log("Request : " + JSON.stringify(chat));
-
     const createChat = await c.createChat(chat);
     console.log("Data: " + JSON.stringify(createChat));
-    res.end(JSON.stringify(createChat));
+    res.json(createChat);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -362,18 +353,14 @@ app.post("/CreateChatMsg", async function (req, res) {
   try {
     console.log("Start Create Chat Msg API");
     const reqJson = req.body;
-
     const chatMsg = reqJson;
-
     const gId = await myU.generateChatMsgId(chatMsg.chatId);
-
     chatMsg.msgId = gId;
     console.log(gId);
     console.log("Request : " + JSON.stringify(chatMsg));
-
     const createChatMsg = await c.createChatMsg(chatMsg);
     console.log("Data: " + JSON.stringify(createChatMsg));
-    res.end(JSON.stringify(createChatMsg));
+    res.json(createChatMsg);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -386,7 +373,6 @@ app.post("/ApplyJob", async function (req, res) {
     const reqJson = req.body;
     const applyMember = reqJson;
     const gId = await myU.generateApplyId(applyMember.jId);
-
     applyMember.aId = gId;
     console.log(gId);
     console.log("Request : " + JSON.stringify(applyMember));
@@ -446,16 +432,13 @@ app.post("/CreatePost", async function (req, res) {
     console.log("Start Create Post API");
     const reqJson = req.body;
     const post = reqJson;
-
     const gId = await myU.generatePostId();
-
     post.postId = gId;
     console.log(gId);
     console.log("Request : " + JSON.stringify(post));
-
     const createPost = await f.createPost(post);
     console.log("Data: " + JSON.stringify(createPost));
-    res.end(JSON.stringify(createPost));
+    res.json(createPost);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -467,16 +450,13 @@ app.post("/CreateComment", async function (req, res) {
     console.log("Start Create Comment API");
     const reqJson = req.body;
     const comment = reqJson;
-
     const gId = await myU.generateCommentId(comment.postId);
-
     comment.commentId = gId;
     console.log(gId);
     console.log("Request : " + JSON.stringify(comment));
-
     const createComment = await f.createComment(comment);
     console.log("Data: " + JSON.stringify(createComment));
-    res.end(JSON.stringify(createComment));
+    res.json(createComment);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -488,7 +468,7 @@ app.post("/Forum", async function (req, res) {
     console.log("Start Post List API");
     const postList = await f.postList();
     console.log(postList);
-    res.end(JSON.stringify(postList));
+    res.json(postList);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -502,7 +482,7 @@ app.post("/PostComment", async function (req, res) {
     const postId = reqJson.postId;
     const getComment = await f.getComment(postId);
     console.log(getComment);
-    res.end(JSON.stringify(getComment));
+    res.json(getComment);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -515,7 +495,6 @@ app.post("/ChangeCreatePostActive", async function (req, res) {
     const reqJson = req.body;
     const mId = reqJson.mId;
     console.log("Request : " + JSON.stringify(mId));
-
     const changeCreatePostActive = await f.changeCreatePostActive(mId);
     console.log("Data: " + JSON.stringify(changeCreatePostActive));
     res.end(JSON.stringify(changeCreatePostActive));
@@ -531,10 +510,24 @@ app.post("/ChangeCreateCommentActive", async function (req, res) {
     const reqJson = req.body;
     const mId = reqJson.mId;
     console.log("Request : " + JSON.stringify(mId));
-
     const changeCreateCommentActive = await f.changeCreateCommentActive(mId);
     console.log("Data: " + JSON.stringify(changeCreateCommentActive));
-    res.end(JSON.stringify(changeCreateCommentActive));
+    res.json(changeCreateCommentActive);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/ChangeEmployerActive", async function (req, res) {
+  try {
+    console.log("Start Change Employer Active API");
+    const reqJson = req.body;
+    const eId = reqJson.eId;
+    console.log("Request : " + JSON.stringify(eId));
+    const changeEmployerActive = await user.changeEmployerActive(eId);
+    console.log("Data: " + JSON.stringify(changeEmployerActive));
+    res.json(changeEmployerActive);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
