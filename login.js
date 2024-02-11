@@ -53,7 +53,7 @@ async function login(username, password) {
     console.log(`Error: ${error}`);
   }
 }
-getCurrentMember;
+
 async function getCurrentMember(userId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
