@@ -1,6 +1,7 @@
 // import "cors"
 var cors = require("cors");
 var express = require("express");
+const bodyParser = require("body-parser");
 var app = express();
 app.use(bodyParser.json({ limit: "10mb" }));
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
@@ -12,7 +13,6 @@ const e = require("./employment");
 const c = require("./chat");
 const f = require("./forum");
 const myU = require("./utils");
-const bodyParser = require("body-parser");
 const user = require("./user");
 
 app.use(bodyParser.json());
