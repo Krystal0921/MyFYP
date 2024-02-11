@@ -45,7 +45,7 @@ async function addEmployer(employer) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const imageBase64String = employer.image;
-    fs.mkdir("./image/" + employer.userId, (error) => {
+    await fs.mkdirSync("./image/" + employer.userId, (error) => {
       if (error) console.log(error);
       else console.log("OK");
     });
