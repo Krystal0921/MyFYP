@@ -91,15 +91,14 @@ app.post("/EmployerRegister", async function (req, res) {
   }
 });
 
-app.post("/LessonProgress", async function (req, res) {
+app.post("/MemberLessonProgress", async function (req, res) {
   try {
-    console.log("Start Lesson Progress API");
+    console.log("Start Member Lesson Progress API");
     const reqJson = req.body;
-    const lessonId = reqJson.lessonId;
-    const memberId = reqJson.userId;
-    const lessonProgress = await u.getMemberLessonProgress(memberId, lessonId);
-    console.log(JSON.stringify(lessonProgress));
-    res.json(lessonProgress);
+    const mId = reqJson.mId;
+    const getMemberLessonProgress = await u.getMemberLessonProgress(mId);
+    console.log(getMemberLessonProgress);
+    res.json(getMemberLessonProgress);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -113,10 +112,11 @@ app.post("/UpdateLessonProgress", async function (req, res) {
     const lessonProgress = reqJson;
     const updateLessonProgress = await l.updateLessonProgress(
       lessonProgress.mId,
-      lessonProgress.lessonId
+      lessonProgress.lessonId,
+      lessonProgress.sectionId
     );
     console.log(updateLessonProgress);
-    res.json(lessonProgress);
+    res.json(updateLessonProgress);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
@@ -158,6 +158,21 @@ app.post("/Lesson/Section/Content", async function (req, res) {
     const sectionContent = await l.getSectionDetail(lessonId, sectionId);
     console.log(JSON.stringify(sectionContent));
     res.json(sectionContent);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/Lesson/Section/Quiz", async function (req, res) {
+  try {
+    console.log("Start Quiz API");
+    const reqJson = req.body;
+    const lessonId = reqJson.lessonId;
+    const sectionId = reqJson.sectionId;
+    const quiz = await l.getQuiz(lessonId, sectionId);
+    console.log(JSON.stringify(quiz));
+    res.json(quiz);
   } catch (e) {
     console.log("Error: " + e);
     throw e;

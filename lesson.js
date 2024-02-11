@@ -36,7 +36,25 @@ async function getSectionDetail(lessonId, sectionId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT * FROM project.lesson_section_content WHERE lessonId = ? AND sectionId = ?",
+      `SELECT project.lesson_section.sectionTitle, project.lesson_section_content.*
+      FROM project.lesson_section_content
+      JOIN project.lesson_section ON project.lesson_section.lessonId = project.lesson_section_content.lessonId
+        AND project.lesson_section.sectionId = project.lesson_section_content.sectionId
+      WHERE project.lesson_section.lessonId = ? AND project.lesson_section.sectionId = ?`,
+      [lessonId, sectionId]
+    );
+    return r.requestHandle(true, "", 0, results);
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
+async function getQuiz(lessonId, sectionId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      "SELECT * FROM project.quiz WHERE lessonId = ? AND sectionId = ?",
       [lessonId, sectionId]
     );
     return r.requestHandle(true, "", 0, results);
@@ -148,48 +166,33 @@ async function editSectionContent(sectionContent) {
     return r.requestHandle(false, `${error}`, 1, "");
   }
 }
-
-async function updateLessonProgress(mId, lessonId) {
+async function updateLessonProgress(mId, lessonId, sectionId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    let lessonProgressQuery = "";
-
-    if (lessonId === "l01") {
-      lessonProgressQuery =
-        "SELECT mark FROM project.member_lesson_progress WHERE mId = ? AND";
-
-      console.log("Fetching lesson 1 progress...");
-    } else if (lessonId === "l02") {
-      lessonProgressQuery =
-        "SELECT mark FROM project.member_lesson_progress WHERE mId = ?";
-
-      console.log("Fetching lesson 2 progress...");
-    } else if (lessonId === "l03") {
-      lessonProgressQuery =
-        "SELECT mark FROM project.member_lesson_progress WHERE mId = ?";
-
-      console.log("Fetching lesson 3 progress...");
-    } else {
-      return r.requestHandle(false, "lessonId incorrect", 1, "");
-    }
-
-    const lessonProgressResults = await query(lessonProgressQuery, [mId]);
-    const lessonProgress = lessonProgressResults[0][lessonProgressField];
-    const updatedLessonProgress = lessonProgress + 20;
-
-    const updateQuery = `UPDATE project.member_lesson_progress SET mark = ? WHERE mId = ?`;
-    const updateResults = await query(updateQuery, [
-      updatedLessonProgress,
-      mId,
-    ]);
-
-    console.log(`Updated Lesson Progress successfully.`);
-    return r.requestHandle(
-      true,
-      "Success",
-      0,
-      "Mark point : " + updatedLessonProgress
+    const check = await query(
+      "SELECT * FROM project.member_lesson_progress WHERE mId = ? AND lessonId = ? AND sectionId = ? ",
+      [mId, lessonId, sectionId]
     );
+    if (check.length > 0) {
+      return r.requestHandle(
+        false,
+        "member already completed this section",
+        1,
+        ""
+      );
+    } else {
+      await query("INSERT INTO project.member_lesson_progress SET ?", {
+        mId: mId,
+        lessonId: lessonId,
+        sectionId: sectionId,
+        mark: 20,
+      });
+      const result = await query(
+        "SELECT * FROM project.member_lesson_progress WHERE mId = ? AND lessonId = ? AND sectionId = ? ",
+        [mId, lessonId, sectionId]
+      );
+      return r.requestHandle(true, "lesson progress updated", 0, result);
+    }
   } catch (error) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 2, "");
@@ -233,7 +236,7 @@ async function deleteSectionContent(sectionContent) {
     );
     if (check.length > 0) {
       const results = await query(
-        "DELETE FROM lesson_section_content   WHERE lessonId=? AND AND sectionId = ? AND contentId = ? ;"[
+        "DELETE FROM lesson_section_content  WHERE lessonId=? AND AND sectionId = ? AND contentId = ? ;"[
           (section.lessonId, section.sectionId, sectionContent.contentId)
         ]
       );
@@ -252,6 +255,7 @@ module.exports = {
   getLessonList: getLessonList,
   getSectionList: getSectionList,
   getSectionDetail: getSectionDetail,
+  getQuiz: getQuiz,
   createSection: createSection,
   createSectionContent: createSectionContent,
   editSection: editSection,

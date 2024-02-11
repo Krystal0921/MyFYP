@@ -24,12 +24,12 @@ async function getEmployer() {
   }
 }
 
-async function getMemberLessonProgress(mId, lessonId) {
+async function getMemberLessonProgress(mId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT *  from project.member_lesson_progress WHERE mId=? AND lessonId=? ",
-      [mId, lessonId]
+      "SELECT lessonId, SUM(mark) as totalMark FROM project.member_lesson_progress WHERE mId = ? GROUP BY lessonId ",
+      [mId]
     );
     return r.requestHandle(true, "", 0, results);
   } catch (error) {
@@ -63,6 +63,7 @@ async function changeEmployerActive(eId) {
 module.exports = {
   getMember: getMember,
   getEmployer: getEmployer,
-  getMemberLessonProgress: getMemberLessonProgress,
   changeEmployerActive: changeEmployerActive,
+  getMemberLessonProgress,
+  getMemberLessonProgress,
 };
