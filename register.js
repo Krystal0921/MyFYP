@@ -45,10 +45,13 @@ async function addEmployer(employer) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const imageBase64String = employer.image;
-    await fs.mkdirSync("./image/" + employer.userId, (error) => {
-      if (error) console.log(error);
-      else console.log("OK");
-    });
+
+    if (!fs.existsSync("./image/" + employer.userId)) {
+      await fs.mkdirSync("./image/" + employer.userId, (error) => {
+        if (error) console.log(error);
+        else console.log("OK");
+      });
+    }
 
     const outputPath = "./image/" + employer.userId + "/" + employer.cPhoto;
 
