@@ -28,7 +28,12 @@ async function getMemberLessonProgress(mId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT  project.lesson.lessonId,ifnull(sum(mark),0) FROM project.lesson left join project.member_lesson_progress ON project.lesson.lessonId   =  project.member_lesson_progress.lessonId  WHERE mId = ? GROUP BY project.lesson.lessonId ",
+      `SELECT l.lessonId, IFNULL(SUM(mark), 0) FROM project.lesson AS l LEFT JOIN (
+          SELECT *
+          FROM project.member_lesson_progress
+          WHERE mId = 'm0000001'
+      ) AS ls ON l.lessonId = ls.lessonId
+       GROUP BY l.lessonId `,
       [mId]
     );
     return r.requestHandle(true, "", 0, results);
