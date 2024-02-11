@@ -78,7 +78,7 @@ async function getCurrentEmployer(userId) {
     );
 
     if (results.length > 0) {
-      const employer = results[0];
+      const employer = results;
       const imagePath = "./image/" + userId + "/" + employer.cPhoto;
       const imageBase64 = await readImageAsBase64(imagePath);
 
