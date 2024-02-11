@@ -43,7 +43,8 @@ async function addMember(member) {
 async function addEmployer(employer) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-
+    const image = employer.image;
+    console.log(image);
     const uNameResults = await query(
       "SELECT * FROM project.user WHERE uName = ?",
       [employer.uName]
