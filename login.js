@@ -72,18 +72,37 @@ async function getCurrentEmployer(userId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT  * from project.user_employer WHERE eId =? AND active = 1",
+      "SELECT * FROM project.user_employer WHERE eId = ? AND active = 1",
       [userId]
     );
+
     if (results.length > 0) {
-      return results;
+      const employer = results[0];
+      const imagePath = "./image/" + employer.userId + "/" + employer.cPhoto;
+      const imageBase64 = await readImageAsBase64(imagePath);
+
+      employer.image = imageBase64;
+
+      return employer;
     } else {
       return false;
     }
   } catch (error) {
-    console.log(`error ${error}`);
+    console.log(`Error: ${error}`);
     throw error;
   }
+}
+
+function readImageAsBase64(imagePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(imagePath, { encoding: "base64" }, (error, data) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    });
+  });
 }
 
 module.exports = {
