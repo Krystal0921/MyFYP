@@ -2,6 +2,8 @@
 var cors = require("cors");
 var express = require("express");
 var app = express();
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 const Db = require("./login");
 const u = require("./user");
 const rr = require("./register");
