@@ -50,7 +50,7 @@ async function addEmployer(employer) {
       else console.log("OK");
     });
 
-    const outputPath = employer.userId + "/" + employer.cPhoto;
+    const outputPath = "./image/" + employer.userId + "/" + employer.cPhoto;
 
     base64ToImage(imageBase64String, outputPath);
 
