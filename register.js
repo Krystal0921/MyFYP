@@ -1,6 +1,7 @@
 const connection = require("./dbConnect");
 const util = require("util");
 const r = require("./requestHandle");
+const fs = require("fs");
 
 async function addMember(member) {
   try {
@@ -43,8 +44,16 @@ async function addMember(member) {
 async function addEmployer(employer) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const image = employer.image;
-    console.log(image);
+    const imageBase64String = employer.image;
+    fs.mkdir(employer.userId, (error) => {
+      if (error) console.log(error);
+      else console.log("OK");
+    });
+
+    const outputPath = employer.userId + "/" + employer.cPhoto;
+
+    base64ToImage(imageBase64String, outputPath);
+
     const uNameResults = await query(
       "SELECT * FROM project.user WHERE uName = ?",
       [employer.uName]
@@ -88,6 +97,17 @@ async function addEmployer(employer) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 3, "");
   }
+}
+
+function base64ToImage(base64String, outputPath) {
+  // Remove the data URL prefix from the base64 string
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
+
+  // Create a buffer from the base64 string
+  const imageBuffer = Buffer.from(base64Data, "base64");
+
+  // Write the buffer to the output file
+  fs.writeFileSync(outputPath, imageBuffer, "base64");
 }
 
 async function generateId(type) {
