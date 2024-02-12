@@ -31,7 +31,7 @@ async function getMemberLessonProgress(mId) {
       `SELECT l.lessonId, IFNULL(SUM(mark), 0) as totalMark FROM project.lesson AS l LEFT JOIN (
           SELECT *
           FROM project.member_lesson_progress
-          WHERE mId = 'm0000001'
+          WHERE mId = ?
       ) AS ls ON l.lessonId = ls.lessonId
        GROUP BY l.lessonId `,
       [mId]
