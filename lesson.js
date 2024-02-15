@@ -18,7 +18,11 @@ async function getSectionList(lessonId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT * FROM project.lesson_section WHERE lessonId = ?",
+      `SELECT project.lesson.lessonPhoto, project.lesson_section.* 
+      FROM project.lesson_section 
+      JOIN project.lesson
+      ON project.lesson_section.lessonId = project.lesson.lessonId
+      WHERE project.lesson_section.lessonId = ?`,
       [lessonId]
     );
     if (results.length > 0) {
