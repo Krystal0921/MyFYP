@@ -266,7 +266,7 @@ async function sectionTaken(mId, sectionId) {
     if (results.length > 0) {
       return r.requestHandle(true, "", 0, "has taken");
     } else {
-      return r.requestHandle(false, "", 1, "");
+      return r.requestHandle(true, "", 1, "not taken");
     }
   } catch (error) {
     console.log(`error ${error}`);
