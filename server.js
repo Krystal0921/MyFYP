@@ -551,6 +551,21 @@ app.post("/ChangeEmployerActive", async function (req, res) {
   }
 });
 
+app.post("/SectionTaken", async function (req, res) {
+  try {
+    console.log("Start Section Taken API");
+    const reqJson = req.body;
+    const mId = reqJson.mId;
+    const sectionId = reqJson.sectionId;
+    const sectionTaken = await l.sectionTaken(mId, sectionId);
+    console.log(JSON.stringify(sectionTaken));
+    res.json(sectionTaken);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 var server = app.listen(3000, function () {
   var host = server.address().address;
   var port = server.address().port;

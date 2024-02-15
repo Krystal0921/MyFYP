@@ -255,6 +255,25 @@ async function deleteSectionContent(sectionContent) {
   }
 }
 
+async function sectionTaken(mId, sectionId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      `SELECT * FROM project.member_lesson_progress
+      WHERE mId = ? AND sectionId = ? `,
+      [mId, sectionId]
+    );
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, "has taken");
+    } else {
+      return r.requestHandle(false, "", 1, "");
+    }
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, `${error}`, 2, "");
+  }
+}
+
 module.exports = {
   getLessonList: getLessonList,
   getSectionList: getSectionList,
@@ -267,4 +286,6 @@ module.exports = {
   updateLessonProgress: updateLessonProgress,
   deleteSection: deleteSection,
   deleteSectionContent: deleteSectionContent,
+  sectionTaken,
+  sectionTaken,
 };
