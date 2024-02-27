@@ -274,6 +274,21 @@ async function sectionTaken(mId, sectionId) {
   }
 }
 
+async function feedback(feedbackContent) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      "INSERT INTO project.feedback SET ?",
+      feedbackContent
+    );
+    console.log("Feedback received.");
+    return r.requestHandle(true, "Sucess", 0, "");
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
 module.exports = {
   getLessonList: getLessonList,
   getSectionList: getSectionList,
@@ -286,6 +301,6 @@ module.exports = {
   updateLessonProgress: updateLessonProgress,
   deleteSection: deleteSection,
   deleteSectionContent: deleteSectionContent,
-  sectionTaken,
-  sectionTaken,
+  sectionTaken: sectionTaken,
+  feedback: feedback,
 };

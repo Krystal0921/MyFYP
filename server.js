@@ -566,6 +566,20 @@ app.post("/SectionTaken", async function (req, res) {
   }
 });
 
+app.post("/Feedback", async function (req, res) {
+  try {
+    console.log("Start Feedback API");
+    const reqJson = req.body;
+    const feedbackContent = reqJson;
+    const feedback = await l.feedback(feedbackContent);
+    console.log(JSON.stringify(feedback));
+    res.json(feedback);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 var server = app.listen(3000, function () {
   var host = server.address().address;
   var port = server.address().port;
