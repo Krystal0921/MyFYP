@@ -18,7 +18,7 @@ async function getSectionList(lessonId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      `SELECT project.lesson.lessonPhoto, project.lesson_section.* 
+      `SELECT project.lesson.lessonPhoto,project.lesson.lessonName,  project.lesson_section.* 
       FROM project.lesson_section 
       JOIN project.lesson
       ON project.lesson_section.lessonId = project.lesson.lessonId
