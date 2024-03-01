@@ -51,7 +51,7 @@ async function changeEmployerActive(eId) {
     ]);
     if (check.length > 0) {
       results = await query(
-        "UPDATE project.user_employer SET active = ? WHERE mId = ?",
+        "UPDATE project.user_employer SET active = ? WHERE eId = ?",
         [1, eId]
       );
       console.log("Update employer active to 1");
