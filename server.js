@@ -98,7 +98,7 @@ app.post("/MemberDetail", async function (req, res) {
     console.log("Start Member Detail API");
     const reqJson = req.body;
     const mId = reqJson.mId;
-    const member = await Db.getCurrentMember(mId);
+    const member = await Db.Member(mId);
     console.log(JSON.stringify(member));
     res.json(member);
   } catch (e) {
@@ -112,7 +112,7 @@ app.post("/EmployerDetail", async function (req, res) {
     console.log("Start Employer Detail API");
     const reqJson = req.body;
     const eId = reqJson.eId;
-    const employer = await Db.getCurrentEmployer(eId);
+    const employer = await Db.Employer(eId);
     console.log(JSON.stringify(employer));
     res.json(employer);
   } catch (e) {

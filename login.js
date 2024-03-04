@@ -93,6 +93,44 @@ async function getCurrentEmployer(userId) {
   }
 }
 
+async function Member(userId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      "SELECT *  from project.user_member WHERE mId =? ",
+      [userId]
+    );
+    return r.requestHandle(true, "", 0, results);
+  } catch (error) {
+    console.log(`error ${error}`);
+    throw error;
+  }
+}
+
+async function Employer(userId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      "SELECT * FROM project.user_employer WHERE eId = ? AND active = 1",
+      [userId]
+    );
+
+    if (results.length > 0) {
+      const employer = results[0];
+      const imagePath = "./image/" + userId + "/" + employer.cPhoto;
+      const imageBase64 = await readImageAsBase64(imagePath);
+      employer.image = imageBase64;
+
+      return r.requestHandle(true, "", 0, employer);
+    } else {
+      return r.requestHandle(false, "", 1, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    throw error;
+  }
+}
+
 function readImageAsBase64(imagePath) {
   return new Promise((resolve, reject) => {
     fs.readFile(imagePath, { encoding: "base64" }, (error, data) => {
@@ -109,4 +147,6 @@ module.exports = {
   getCurrentMember: getCurrentMember,
   getCurrentEmployer: getCurrentEmployer,
   login: login,
+  Member: Member,
+  Employer: Employer,
 };
