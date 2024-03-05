@@ -520,6 +520,20 @@ app.post("/Forum", async function (req, res) {
   }
 });
 
+app.post("/PostTitle", async function (req, res) {
+  try {
+    console.log("Start Post Title API");
+    const reqJson = req.body;
+    const postId = reqJson.postId;
+    const postTitle = await f.getPostDetail(postId);
+    console.log(postTitle);
+    res.json(postTitle);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 app.post("/PostComment", async function (req, res) {
   try {
     console.log("Start Comment API");

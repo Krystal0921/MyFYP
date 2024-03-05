@@ -46,18 +46,35 @@ async function getMemberLessonProgress(mId) {
 async function changeEmployerActive(eId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    check = await query("SELECT * FROM project.user_employer WHERE eId = ? ", [
-      eId,
-    ]);
+    const check = await query(
+      "SELECT * FROM project.user_employer WHERE eId = ?",
+      [eId]
+    );
+
     if (check.length > 0) {
-      results = await query(
+      const currentActiveStatus = check[0].active;
+      let newActiveStatus;
+
+      if (currentActiveStatus === 0) {
+        newActiveStatus = 1;
+      } else if (currentActiveStatus === 1) {
+        newActiveStatus = 0;
+      }
+
+      const results = await query(
         "UPDATE project.user_employer SET active = ? WHERE eId = ?",
-        [1, eId]
+        [newActiveStatus, eId]
       );
-      console.log("Update employer active to 1");
-      return r.requestHandle(true, "Update employer active ", 0, "");
+
+      console.log("Successfully updated employer active status.");
+      return r.requestHandle(true, "Update employer active status.", 0, "");
     } else {
-      return r.requestHandle(false, "Can not Update employer", 0, "");
+      return r.requestHandle(
+        false,
+        "Cannot update employer. Employer not found.",
+        0,
+        ""
+      );
     }
   } catch (error) {
     console.log(`Error: ${error}`);
