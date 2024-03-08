@@ -6,14 +6,14 @@ const myU = require("./utils");
 async function chatList(id) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const query1 = `SELECT c.chatId, c.createAt, c.receivedId AS "sender",
+    const query1 = `SELECT c.chatId, c.createAt, c.receiverId AS "sender",
     CASE
-      WHEN c.receivedId LIKE 'e%' THEN ue.eName
+      WHEN c.receiverId LIKE 'e%' THEN ue.eName
       ELSE um.mName
     END AS userName
 FROM project.chat c
-LEFT JOIN project.user_employer ue ON c.receivedId = ue.eId 
-LEFT JOIN project.user_member um ON c.receivedId = um.mId 
+LEFT JOIN project.user_employer ue ON c.receiverId = ue.eId 
+LEFT JOIN project.user_member um ON c.receiverId = um.mId 
 WHERE c.senderId = ? 
 UNION
 SELECT c.chatId, c.createAt, c.senderId AS "sender",
@@ -24,7 +24,7 @@ SELECT c.chatId, c.createAt, c.senderId AS "sender",
 FROM project.chat c
 LEFT JOIN project.user_employer ue ON c.senderId = ue.eId 
 LEFT JOIN project.user_member um ON c.senderId = um.mId 
-WHERE c.receivedId = ? 
+WHERE c.receiverId = ? 
 ORDER BY chatId`;
 
     const results = await query(query1, [id, id]);
@@ -54,8 +54,8 @@ async function createChat(chat) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     check = await query(
-      "SELECT * FROM project.chat WHERE (senderId = ? AND receivedId = ? )OR (senderId = ? AND receivedId = ?)",
-      [chat.senderId, chat.receivedId, chat.receivedId, chat.senderId]
+      "SELECT * FROM project.chat WHERE (senderId = ? AND receiverId = ? )OR (senderId = ? AND receiverId = ?)",
+      [chat.senderId, chat.receiverId, chat.receiverId, chat.senderId]
     );
 
     if (check.length > 0) {
@@ -84,7 +84,7 @@ async function createChatMsg(chatMsg) {
     ]);
     console.log("1");
     check2 = await query(
-      "SELECT * FROM project.chat WHERE senderId = ? OR receivedId = ?",
+      "SELECT * FROM project.chat WHERE senderId = ? OR receiverId = ?",
       [chatMsg.userId, chatMsg.userId]
     );
 
