@@ -67,6 +67,7 @@ async function createPost(post) {
       base64ToImage(imageBase64String, outputPath);
 
       const results = await query("INSERT INTO project.forum SET ?", post);
+
       console.log("New post added successfully.");
       return r.requestHandle(true, "New post added successfully.", 0, "");
     } else {
