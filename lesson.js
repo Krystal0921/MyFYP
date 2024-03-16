@@ -54,17 +54,93 @@ async function getSectionDetail(lessonId, sectionId) {
   }
 }
 
-async function getQuiz(lessonId, sectionId) {
+async function getQuiz(mId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT * FROM project.quiz WHERE lessonId = ? AND sectionId = ?",
-      [lessonId, sectionId]
+      `SELECT *
+      FROM project.quiz
+      WHERE sectionId IN (
+          SELECT sectionId
+          FROM project.member_lesson_progress
+          WHERE mId = ?
+      )
+      ORDER BY RAND()
+      LIMIT 10`,
+      [mId]
     );
-    return r.requestHandle(true, "", 0, results);
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, results);
+    } else {
+      return r.requestHandle(false, "You dont have take lesson", 1, results);
+    }
   } catch (error) {
     console.log(`error ${error}`);
-    return r.requestHandle(false, `${error}`, 1, "");
+    return r.requestHandle(false, `${error}`, 2, "");
+  }
+}
+
+async function insertQuizMark(mId, lessonId, mark) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const existingRecord = await query(
+      `SELECT * FROM project.quiz_score WHERE mId = ? AND lessonId = ?`,
+      [mId, lessonId]
+    );
+    if (existingRecord.length > 0) {
+      const existingScore = existingRecord[0].score;
+      if (existingScore >= mark) {
+        return r.requestHandle(
+          true,
+          "Existing score is higher than the new mark",
+          0,
+          ""
+        );
+      } else {
+        await query(
+          `UPDATE project.quiz_score 
+          SET score = ? 
+          WHERE mId = ? AND lessonId = ?`,
+          [mark, mId, lessonId]
+        );
+        return r.requestHandle(true, "Update Success", 1, "");
+      }
+    } else {
+      await query(
+        `INSERT INTO project.quiz_score (mId, lessonId, score)
+        VALUES (?, ?, ?)`,
+        [mId, lessonId, mark]
+      );
+      return r.requestHandle(true, "Insert Success", 2, "");
+    }
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, `${error}`, 3, "");
+  }
+}
+
+async function getQuizMark(mId, lessonId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      `SELECT *
+      FROM project.quiz_score
+      WHERE mId = ? AND lessonId = ?`,
+      [mId, lessonId]
+    );
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, results);
+    } else {
+      return r.requestHandle(
+        false,
+        "You dont have take quiz in this lesson",
+        1,
+        results
+      );
+    }
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, `${error}`, 2, "");
   }
 }
 
@@ -294,6 +370,8 @@ module.exports = {
   getSectionList: getSectionList,
   getSectionDetail: getSectionDetail,
   getQuiz: getQuiz,
+  insertQuizMark: insertQuizMark,
+  getQuizMark: getQuizMark,
   createSection: createSection,
   createSectionContent: createSectionContent,
   editSection: editSection,

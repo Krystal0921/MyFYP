@@ -198,11 +198,41 @@ app.post("/Lesson/Section/Quiz", async function (req, res) {
   try {
     console.log("Start Quiz API");
     const reqJson = req.body;
-    const lessonId = reqJson.lessonId;
-    const sectionId = reqJson.sectionId;
-    const quiz = await l.getQuiz(lessonId, sectionId);
+    const mId = reqJson.mId;
+    const quiz = await l.getQuiz(mId);
     console.log(JSON.stringify(quiz));
     res.json(quiz);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/InsertQuizMark", async function (req, res) {
+  try {
+    console.log("Start Insert Quiz Mark API");
+    const reqJson = req.body;
+    const mId = reqJson.mId;
+    const lessonId = reqJson.lessonId;
+    const mark = reqJson.mark;
+    const quizMark = await l.insertQuizMark(mId, lessonId, mark);
+    console.log(JSON.stringify(quizMark));
+    res.json(quizMark);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/QuizMark", async function (req, res) {
+  try {
+    console.log("Start Quiz Mark API");
+    const reqJson = req.body;
+    const mId = reqJson.mId;
+    const lessonId = reqJson.lessonId;
+    const quizMarkRecord = await l.getQuizMark(mId, lessonId);
+    console.log(JSON.stringify(quizMarkRecord));
+    res.json(quizMarkRecord);
   } catch (e) {
     console.log("Error: " + e);
     throw e;
