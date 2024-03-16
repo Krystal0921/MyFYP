@@ -52,6 +52,19 @@ async function createPost(post) {
     );
 
     if (checkCreatePostActive.length > 0) {
+      const imageBase64String = post.image;
+
+      if (!fs.existsSync("./image/post/" + post.postId)) {
+        await fs.mkdirSync("./image/post/" + post.postId, (error) => {
+          if (error) console.log(error);
+          else console.log("OK");
+        });
+      }
+
+      const outputPath = "./image/post/" + post.postId + "/" + post.postImage;
+
+      base64ToImage(imageBase64String, outputPath);
+
       const results = await query("INSERT INTO project.forum SET ?", post);
       console.log("New post added successfully.");
       return r.requestHandle(true, "New post added successfully.", 0, "");
@@ -62,6 +75,17 @@ async function createPost(post) {
     console.log(`Error: ${error}`);
     return r.requestHandle(false, `${error}`, 2, "");
   }
+}
+
+function base64ToImage(base64String, outputPath) {
+  // Remove the data URL prefix from the base64 string
+  const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
+
+  // Create a buffer from the base64 string
+  const imageBuffer = Buffer.from(base64Data, "base64");
+
+  // Write the buffer to the output file
+  fs.writeFileSync(outputPath, imageBuffer, "base64");
 }
 
 async function createComment(comment) {
