@@ -55,14 +55,14 @@ async function createPost(post) {
     if (checkCreatePostActive.length > 0) {
       const imageBase64String = post.image;
 
-      if (!fs.existsSync("./image/post/" + post.postId)) {
-        await fs.mkdirSync("./image/post/" + post.postId, (error) => {
+      if (!fs.existsSync("./image/" + post.postId)) {
+        await fs.mkdirSync("./image/" + post.postId, (error) => {
           if (error) console.log(error);
           else console.log("OK");
         });
       }
 
-      const outputPath = "./image/post/" + post.postId + "/" + post.postImage;
+      const outputPath = "./image/" + post.postId + "/" + post.postImage;
 
       base64ToImage(imageBase64String, outputPath);
 
