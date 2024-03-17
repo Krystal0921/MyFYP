@@ -8,9 +8,23 @@ async function postList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT user_member.mName, project.forum.*FROM project.user_member JOIN project.forum ON project.user_member.mId =  project.forum.mId"
+      "SELECT user_member.mName, project.forum.* FROM project.user_member JOIN project.forum ON project.user_member.mId = project.forum.mId"
     );
-    return r.requestHandle(true, "", 0, results);
+
+    if (results.length > 0) {
+      const posts = [];
+
+      for (const post of results) {
+        const imagePath = "./image/" + post.postId + "/" + post.postImage;
+        const imageBase64 = await readImageAsBase64(imagePath);
+        post.image = imageBase64;
+        posts.push(post);
+      }
+
+      return r.requestHandle(true, "", 0, posts);
+    } else {
+      return r.requestHandle(false, "", 1, "");
+    }
   } catch (error) {
     console.log(`error ${error}`);
     return r.requestHandle(false, `${error}`, 1, "");
@@ -220,6 +234,18 @@ async function changeCreateCommentActive(mId) {
   }
 }
 
+function readImageAsBase64(imagePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(imagePath, { encoding: "base64" }, (error, data) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
 module.exports = {
   postList: postList,
   createPost: createPost,
@@ -228,4 +254,5 @@ module.exports = {
   changeCreatePostActive: changeCreatePostActive,
   changeCreateCommentActive: changeCreateCommentActive,
   getPostDetail: getPostDetail,
+  readImageAsBase64: readImageAsBase64,
 };
