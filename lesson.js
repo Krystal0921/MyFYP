@@ -58,9 +58,10 @@ async function getQuiz(mId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      `SELECT *
-      FROM project.quiz
-      WHERE sectionId IN (
+      `SELECT q.*, ls.sectionTitle
+      FROM project.quiz q
+      JOIN project.lesson_section ls ON q.sectionId = ls.sectionId
+      WHERE q.sectionId IN (
           SELECT sectionId
           FROM project.member_lesson_progress
           WHERE mId = ?
