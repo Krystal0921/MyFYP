@@ -133,7 +133,7 @@ async function getQuizMark(mId, lessonId) {
       return r.requestHandle(true, "", 0, results);
     } else {
       return r.requestHandle(
-        false,
+        true,
         "You dont have take quiz in this lesson",
         1,
         results
