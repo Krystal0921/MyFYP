@@ -54,7 +54,7 @@ async function getSectionDetail(lessonId, sectionId) {
   }
 }
 
-async function getQuiz(mId) {
+async function getQuiz(mId, lessonId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
@@ -64,11 +64,11 @@ async function getQuiz(mId) {
       WHERE q.sectionId IN (
           SELECT sectionId
           FROM project.member_lesson_progress
-          WHERE mId = ?
+          WHERE mId = ? AND lessonId = ?
       )
       ORDER BY RAND()
       LIMIT 10`,
-      [mId]
+      [mId, lessonId]
     );
     if (results.length > 0) {
       return r.requestHandle(true, "", 0, results);

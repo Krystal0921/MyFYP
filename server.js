@@ -199,7 +199,8 @@ app.post("/Lesson/Section/Quiz", async function (req, res) {
     console.log("Start Quiz API");
     const reqJson = req.body;
     const mId = reqJson.mId;
-    const quiz = await l.getQuiz(mId);
+    const lessonId = reqJson.lessonId;
+    const quiz = await l.getQuiz(mId, lessonId);
     console.log(JSON.stringify(quiz));
     res.json(quiz);
   } catch (e) {
