@@ -584,8 +584,9 @@ app.post("/ChangeCreatePostActive", async function (req, res) {
     console.log("Start Change Create Post Active API");
     const reqJson = req.body;
     const mId = reqJson.mId;
+    const active = reqJson.active;
     console.log("Request : " + JSON.stringify(mId));
-    const changeCreatePostActive = await f.changeCreatePostActive(mId);
+    const changeCreatePostActive = await f.changeCreatePostActive(mId, active);
     console.log("Data: " + JSON.stringify(changeCreatePostActive));
     res.end(JSON.stringify(changeCreatePostActive));
   } catch (e) {
@@ -599,8 +600,12 @@ app.post("/ChangeCreateCommentActive", async function (req, res) {
     console.log("Start Change Create Comment Active API");
     const reqJson = req.body;
     const mId = reqJson.mId;
+    const active = reqJson.active;
     console.log("Request : " + JSON.stringify(mId));
-    const changeCreateCommentActive = await f.changeCreateCommentActive(mId);
+    const changeCreateCommentActive = await f.changeCreateCommentActive(
+      mId,
+      active
+    );
     console.log("Data: " + JSON.stringify(changeCreateCommentActive));
     res.json(changeCreateCommentActive);
   } catch (e) {

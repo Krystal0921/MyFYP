@@ -156,18 +156,17 @@ async function createComment(comment) {
   }
 }
 
-async function changeCreatePostActive(mId) {
+async function changeCreatePostActive(mId, active) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    check = await query(
-      "SELECT * FROM project.user_member WHERE mId = ? AND createPost = ?",
-      [mId, 1]
-    );
+    check = await query("SELECT * FROM project.user_member WHERE mId = ?", [
+      mId,
+    ]);
 
     if (check.length > 0) {
       results = await query(
         "UPDATE project.user_member SET createPost = ? WHERE mId = ?",
-        [0, mId]
+        [active, mId]
       );
       console.log("Edit Create Post  to 0 successfully.");
       return r.requestHandle(
@@ -195,18 +194,17 @@ async function changeCreatePostActive(mId) {
   }
 }
 
-async function changeCreateCommentActive(mId) {
+async function changeCreateCommentActive(mId, active) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    check = await query(
-      "SELECT * FROM project.user_member WHERE mId = ? AND createComment = ?",
-      [mId, 1]
-    );
+    check = await query("SELECT * FROM project.user_member WHERE mId = ?", [
+      mId,
+    ]);
 
     if (check.length > 0) {
       results = await query(
         "UPDATE project.user_member SET createComment = ? WHERE mId = ?",
-        [0, mId]
+        [active, mId]
       );
       console.log("Edit Create comment  to 0 successfully.");
       return r.requestHandle(
