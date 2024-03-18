@@ -614,8 +614,9 @@ app.post("/ChangeEmployerActive", async function (req, res) {
     console.log("Start Change Employer Active API");
     const reqJson = req.body;
     const eId = reqJson.eId;
+    const active = reqJson.active;
     console.log("Request : " + JSON.stringify(eId));
-    const changeEmployerActive = await user.changeEmployerActive(eId);
+    const changeEmployerActive = await user.changeEmployerActive(eId, active);
     console.log("Data: " + JSON.stringify(changeEmployerActive));
     res.json(changeEmployerActive);
   } catch (e) {
