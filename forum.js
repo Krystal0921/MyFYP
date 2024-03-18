@@ -168,29 +168,19 @@ async function changeCreatePostActive(mId, active) {
         "UPDATE project.user_member SET createPost = ? WHERE mId = ?",
         [active, mId]
       );
-      console.log("Edit Create Post  to 0 successfully.");
+      console.log("Edit Create Post active successfully.");
       return r.requestHandle(
         true,
-        "Edit Create Post  to 0 successfully",
+        "Edit Create Post active successfully",
         0,
         ""
       );
     } else {
-      results = await query(
-        "UPDATE project.user_member SET createPost = ? WHERE mId = ?",
-        [1, mId]
-      );
-      console.log("Edit Create Post Active to 1 successfully.");
-      return r.requestHandle(
-        true,
-        "Edit Create Post Active to 1 successfully",
-        0,
-        ""
-      );
+      return r.requestHandle(false, "do no have this member", 1, "");
     }
   } catch (error) {
     console.log(`Error: ${error}`);
-    return r.requestHandle(false, `${error}`, 1, "");
+    return r.requestHandle(false, `${error}`, 2, "");
   }
 }
 
@@ -206,29 +196,19 @@ async function changeCreateCommentActive(mId, active) {
         "UPDATE project.user_member SET createComment = ? WHERE mId = ?",
         [active, mId]
       );
-      console.log("Edit Create comment  to 0 successfully.");
+      console.log("Edit Create comment active successfully.");
       return r.requestHandle(
         true,
-        "Edit Create comment  to 0 successfully",
+        "Edit Create comment active successfully",
         0,
         ""
       );
     } else {
-      results = await query(
-        "UPDATE project.user_member SET createComment = ? WHERE mId = ?",
-        [1, mId]
-      );
-      console.log("Edit Create Post Active to 1 successfully.");
-      return r.requestHandle(
-        true,
-        "Edit Create comment Active to 1 successfully",
-        0,
-        ""
-      );
+      return r.requestHandle(false, "do no have this member", 1, "");
     }
   } catch (error) {
     console.log(`Error: ${error}`);
-    return r.requestHandle(false, `${error}`, 1, "");
+    return r.requestHandle(false, `${error}`, 2, "");
   }
 }
 
