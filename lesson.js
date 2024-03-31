@@ -393,6 +393,17 @@ async function feedback(feedbackContent) {
   }
 }
 
+async function getFeedback() {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query("SELECT * FROM project.feedback");
+    return r.requestHandle(true, "", 0, results);
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
 module.exports = {
   getLessonList: getLessonList,
   getSectionList: getSectionList,
@@ -410,4 +421,5 @@ module.exports = {
   deleteSectionContent: deleteSectionContent,
   sectionTaken: sectionTaken,
   feedback: feedback,
+  getFeedback: getFeedback,
 };

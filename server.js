@@ -673,6 +673,18 @@ app.post("/Feedback", async function (req, res) {
   }
 });
 
+app.post("/GetFeedback", async function (req, res) {
+  try {
+    console.log("Start Get Feedback  API");
+    const feedbackData = await l.getFeedback();
+    console.log(feedbackData);
+    res.json(feedbackData);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 var server = app.listen(3000, function () {
   var host = server.address().address;
   var port = server.address().port;
