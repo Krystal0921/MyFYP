@@ -145,6 +145,33 @@ async function getQuizMark(mId, lessonId) {
   }
 }
 
+async function publicUserGetQuiz(lessonId) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    const results = await query(
+      `SELECT q.*, ls.sectionTitle
+      FROM project.quiz q
+      JOIN project.lesson_section ls ON q.sectionId = ls.sectionId
+      WHERE q.sectionId IN (
+          SELECT sectionId
+          FROM project.member_lesson_progress
+          WHERE lessonId = ?
+      )
+      ORDER BY RAND()
+      LIMIT 10`,
+      [lessonId]
+    );
+    if (results.length > 0) {
+      return r.requestHandle(true, "", 0, results);
+    } else {
+      return r.requestHandle(false, "You dont have take lesson", 1, results);
+    }
+  } catch (error) {
+    console.log(`error ${error}`);
+    return r.requestHandle(false, `${error}`, 2, "");
+  }
+}
+
 async function createSection(section) {
   try {
     const query = util.promisify(connection.query).bind(connection);
@@ -371,6 +398,7 @@ module.exports = {
   getSectionList: getSectionList,
   getSectionDetail: getSectionDetail,
   getQuiz: getQuiz,
+  publicUserGetQuiz: publicUserGetQuiz,
   insertQuizMark: insertQuizMark,
   getQuizMark: getQuizMark,
   createSection: createSection,

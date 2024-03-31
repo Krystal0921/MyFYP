@@ -209,6 +209,20 @@ app.post("/Lesson/Section/Quiz", async function (req, res) {
   }
 });
 
+app.post("/Lesson/Section/publicQuiz", async function (req, res) {
+  try {
+    console.log("Start Public Quiz API");
+    const reqJson = req.body;
+    const lessonId = reqJson.lessonId;
+    const publicQuiz = await l.publicUserGetQuiz(lessonId);
+    console.log(JSON.stringify(publicQuiz));
+    res.json(publicQuiz);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 app.post("/InsertQuizMark", async function (req, res) {
   try {
     console.log("Start Insert Quiz Mark API");
