@@ -155,6 +155,18 @@ async function applyList(jId) {
   }
 }
 
+function readImageAsBase64(imagePath) {
+  return new Promise((resolve, reject) => {
+    fs.readFile(imagePath, { encoding: "base64" }, (error, data) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(data);
+      }
+    });
+  });
+}
+
 module.exports = {
   jobList: jobList,
   searchJob: searchJob,
@@ -163,4 +175,5 @@ module.exports = {
   applyList: applyList,
   getCompanyJobList: getCompanyJobList,
   jobDetail: jobDetail,
+  readImageAsBase64: readImageAsBase64,
 };
