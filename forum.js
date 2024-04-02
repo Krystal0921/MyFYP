@@ -35,7 +35,10 @@ async function getPostDetail(postId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT * FROM project.forum WHERE postId = ?",
+      `SELECT f.title, f.content, f.postImage, f.createAt, u.mName, u.mPhoto
+      FROM project.forum f
+      JOIN project.user_member u ON f.mId = u.mId
+      WHERE f.postId = ?`,
       [postId]
     );
 
