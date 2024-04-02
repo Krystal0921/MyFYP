@@ -8,12 +8,22 @@ async function jobList() {
     const results = await query(
       "SELECT employment.*, user_employer.cPhoto FROM project.employment JOIN project.user_employer ON user_employer.eId = employment.eId ORDER BY employment.createAt DESC"
     );
-    return r.requestHandle(true, "", 0, results);
+
+    const job = [];
+    for (const employer of results) {
+      const imagePath = "./image/" + employer.eId + "/" + employer.cPhoto;
+      const imageBase64 = await readImageAsBase64(imagePath);
+      employer.image = imageBase64;
+      job.push(employer);
+    }
+
+    return r.requestHandle(true, "", 0, job);
   } catch (error) {
     console.log(`error ${error}`);
     return r.requestHandle(false, error, 1, "");
   }
 }
+
 async function jobDetail(jId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
