@@ -44,7 +44,7 @@ async function getPostDetail(postId) {
 
     const posts = [];
     for (const post of results) {
-      const imagePath = "./image/" + post.postId + "/" + post.postImage;
+      const imagePath = "./image/" + postId + "/" + post.postImage;
       const imageBase64 = await readImageAsBase64(imagePath);
       post.image = imageBase64;
       posts.push(post);
