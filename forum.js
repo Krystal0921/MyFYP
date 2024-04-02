@@ -61,7 +61,11 @@ async function getComment(postId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT * FROM project.forum_comment WHERE postId =?",
+      ` SELECT fc.commentContent, fc.createAt, u.mName, u.mPhoto
+     FROM project.forum_comment fc
+     JOIN project.user_member u ON fc.mId = u.mId
+     WHERE fc.postId = ?
+     ORDER BY fc.createAt ASC`,
       [postId]
     );
     return r.requestHandle(true, "", 0, results);
