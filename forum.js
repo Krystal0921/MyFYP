@@ -34,10 +34,20 @@ async function postList() {
 async function getPostDetail(postId) {
   try {
     const query = util.promisify(connection.query).bind(connection);
-    const results = await query("SELECT * FROM project.forum WHERE postId =?", [
-      postId,
-    ]);
-    return r.requestHandle(true, "", 0, results);
+    const results = await query(
+      "SELECT * FROM project.forum WHERE postId = ?",
+      [postId]
+    );
+
+    const posts = [];
+    for (const post of results) {
+      const imagePath = "./image/" + post.postId + "/" + post.postImage;
+      const imageBase64 = await readImageAsBase64(imagePath);
+      post.image = imageBase64;
+      posts.push(post);
+    }
+
+    return r.requestHandle(true, "", 0, posts);
   } catch (error) {
     console.log(`error ${error}`);
     return r.requestHandle(false, `${error}`, 1, "");
