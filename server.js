@@ -393,6 +393,21 @@ app.post("/AddJob", async function (req, res) {
   }
 });
 
+app.post("/EditJob", async function (req, res) {
+  try {
+    console.log("Start Edit Job API");
+    const reqJson = req.body;
+    const job = reqJson;
+    console.log("Request : " + JSON.stringify(job));
+    const editJob = await e.editJob(job);
+    console.log("Data: " + JSON.stringify(editJob));
+    res.json(editJob);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
 app.post("/ChatList", async function (req, res) {
   try {
     console.log("Start Chat List API");
@@ -559,6 +574,23 @@ app.post("/Forum", async function (req, res) {
     const postList = await f.postList();
     console.log(postList);
     res.json(postList);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/EditPost", async function (req, res) {
+  try {
+    console.log("Start Edit Post API");
+    const reqJson = req.body;
+    const post = reqJson;
+
+    console.log("Request : " + JSON.stringify(post));
+
+    const editPost = await f.editPost(post);
+    console.log("Data: " + JSON.stringify(editPost));
+    res.json(editPost);
   } catch (e) {
     console.log("Error: " + e);
     throw e;

@@ -120,6 +120,31 @@ async function createPost(post) {
   }
 }
 
+async function editPost(post) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query(
+      "SELECT * FROM project.forum WHERE postId = ? AND mId = ?",
+      [post.postId, post.mId]
+    );
+    if (check.length > 0) {
+      const results = await query(
+        `UPDATE project.forum SET 
+        content = ?, createAt=?
+        WHERE postId = ? AND mId = ?`,
+        [post.content, post.createAt, post.postId, post.mId]
+      );
+      console.log("Edit post successfully.");
+      return r.requestHandle(true, "Sucess", 0, "");
+    } else {
+      return r.requestHandle(false, "post is not exist", 1, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
 function base64ToImage(base64String, outputPath) {
   // Remove the data URL prefix from the base64 string
   const base64Data = base64String.replace(/^data:image\/\w+;base64,/, "");
@@ -244,6 +269,7 @@ function readImageAsBase64(imagePath) {
 module.exports = {
   postList: postList,
   createPost: createPost,
+  editPost: editPost,
   createComment: createComment,
   getComment: getComment,
   changeCreatePostActive: changeCreatePostActive,

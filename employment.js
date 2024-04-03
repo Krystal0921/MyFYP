@@ -80,6 +80,45 @@ async function addJob(job) {
   }
 }
 
+async function editJob(job) {
+  try {
+    const query = util.promisify(connection.query).bind(connection);
+    check = await query(
+      "SELECT * FROM project.employment WHERE jId = ? AND eId = ?",
+      [job.jId, job.eId]
+    );
+    if (check.length > 0) {
+      const results = await query(
+        `UPDATE project.employment SET 
+        jobTitle = ?, location = ? , description = ?,
+        highlights = ?,
+        responsibilities = ?,
+        requirements = ? ,
+        createAt =?
+        WHERE jId = ? AND eId = ?`,
+        [
+          job.jobTitle,
+          job.location,
+          job.description,
+          job.highlights,
+          job.responsibilities,
+          job.requirements,
+          job.createAt,
+          job.jId,
+          job.eId,
+        ]
+      );
+      console.log("Edit job successfully.");
+      return r.requestHandle(true, "Sucess", 0, "");
+    } else {
+      return r.requestHandle(false, "Job is not exist", 1, "");
+    }
+  } catch (error) {
+    console.log(`Error: ${error}`);
+    return r.requestHandle(false, `${error}`, 1, "");
+  }
+}
+
 async function applyJob(member) {
   try {
     const query = util.promisify(connection.query).bind(connection);
@@ -172,6 +211,7 @@ module.exports = {
   jobList: jobList,
   searchJob: searchJob,
   addJob: addJob,
+  editJob: editJob,
   applyJob: applyJob,
   applyList: applyList,
   getCompanyJobList: getCompanyJobList,
