@@ -7,7 +7,7 @@ async function jobList() {
   try {
     const query = util.promisify(connection.query).bind(connection);
     const results = await query(
-      "SELECT employment.*, user_employer.cPhoto FROM project.employment JOIN project.user_employer ON user_employer.eId = employment.eId ORDER BY employment.createAt DESC"
+      "SELECT employment.*, user_employer.cPhoto, user_employer.cName FROM project.employment JOIN project.user_employer ON user_employer.eId = employment.eId ORDER BY employment.createAt DESC"
     );
 
     const job = [];
