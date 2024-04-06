@@ -1,6 +1,5 @@
 // import "cors"
-const { spawn } = require("child_process");
-const axios = require("axios");
+
 var cors = require("cors");
 var express = require("express");
 const bodyParser = require("body-parser");
