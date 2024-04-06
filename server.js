@@ -719,17 +719,16 @@ app.post("/GetFeedback", async function (req, res) {
   }
 });
 
-app.post("/AIQuiz", async function (req, res) {
-  try {
-    console.log("Start AI Quiz API");
-    const reqJson = req.body;
-
-    console.log("Start AI Quiz API");
-  } catch (e) {
-    console.log("Error: " + e);
-    throw e;
-  }
-});
+// app.post("/AIQuiz", async function (req, res) {
+//   try {
+//     console.log("Start AI Quiz API");
+//     const reqJson = req.body;
+//     console.log("Start AI Quiz API");
+//   } catch (e) {
+//     console.log("Error: " + e);
+//     throw e;
+//   }
+// });
 
 var server = app.listen(3000, function () {
   var host = server.address().address;
