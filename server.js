@@ -726,7 +726,7 @@ app.post("/AIQuiz", async function (req, res) {
 
     const apiEndpoint = "/predict";
     const base64Image = reqJson.image;
-    console.log(base64Image);
+
     const response = await axios.post(apiEndpoint, { image: base64Image });
     const { predicted_label } = response.data;
 
