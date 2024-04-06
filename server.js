@@ -1,4 +1,6 @@
 // import "cors"
+const { spawn } = require("child_process");
+const axios = require("axios");
 var cors = require("cors");
 var express = require("express");
 const bodyParser = require("body-parser");
@@ -711,6 +713,25 @@ app.post("/GetFeedback", async function (req, res) {
     const feedbackData = await l.getFeedback();
     console.log(feedbackData);
     res.json(feedbackData);
+  } catch (e) {
+    console.log("Error: " + e);
+    throw e;
+  }
+});
+
+app.post("/AIQuiz", async function (req, res) {
+  try {
+    console.log("Start AI Quiz API");
+    const reqJson = req.body;
+
+    const apiEndpoint = "/predict";
+    const base64Image = reqJson.image;
+    console.log(base64Image);
+    const response = await axios.post(apiEndpoint, { image: base64Image });
+    const { predicted_label } = response.data;
+
+    console.log(predicted_label);
+    res.json({ predicted_label });
   } catch (e) {
     console.log("Error: " + e);
     throw e;
