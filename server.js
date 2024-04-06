@@ -724,14 +724,7 @@ app.post("/AIQuiz", async function (req, res) {
     console.log("Start AI Quiz API");
     const reqJson = req.body;
 
-    const apiEndpoint = "/predict";
-    const base64Image = reqJson.image;
-
-    const response = await axios.post(apiEndpoint, { image: base64Image });
-    const { predicted_label } = response.data;
-
-    console.log(predicted_label);
-    res.json({ predicted_label });
+    console.log("Start AI Quiz API");
   } catch (e) {
     console.log("Error: " + e);
     throw e;
