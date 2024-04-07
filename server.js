@@ -718,19 +718,38 @@ app.post("/GetFeedback", async function (req, res) {
   }
 });
 
-// app.post("/AIQuiz", async function (req, res) {
+// const axios = require("axios");
+
+// app.post("/AIQUiz", function (req, res) {
 //   try {
 //     console.log("Start AI Quiz API");
-//     const reqJson = req.body;
-//     console.log("Start AI Quiz API");
+//     const imageData = req.body.image_data; // Get the image data from the request body
+
+//     const requestData = JSON.stringify({ image_data: imageData });
+
+//     const url = "http://127.0.0.1:3001/AIQuiz";
+
+//     axios
+//       .post(url, requestData, { timeout: 5000 })
+//       .then((response) => {
+//         console.log("Received response:", response.data);
+//         res.json(response.data);
+//       })
+//       .catch((error) => {
+//         console.log("1");
+//         console.error("Error:", error);
+//         res.status(500).json({ error: "Internal server error" });
+//       });
 //   } catch (e) {
-//     console.log("Error: " + e);
-//     throw e;
+//     console.log("2");
+//     console.error("Error:", e);
+//     res.status(500).json({ error: "Internal server error" });
 //   }
 // });
-const axios = require("axios");
 
-app.post("/AIQUiz", function (req, res) {
+const unirest = require("unirest");
+
+app.post("/AIQuiz", function (req, res) {
   try {
     console.log("Start AI Quiz API");
     const imageData = req.body.image_data; // Get the image data from the request body
@@ -739,16 +758,20 @@ app.post("/AIQUiz", function (req, res) {
 
     const url = "http://127.0.0.1:3001/AIQuiz";
 
-    axios
-      .post(url, requestData, { timeout: 5000 })
-      .then((response) => {
-        console.log("Received response:", response.data);
-        res.json(response.data);
-      })
-      .catch((error) => {
-        console.log("1");
-        console.error("Error:", error);
-        res.status(500).json({ error: "Internal server error" });
+    unirest
+      .post(url)
+      .timeout(10000) // Set timeout to 5 seconds (adjust as needed)
+      .headers({ "Content-Type": "application/json" })
+      .send(requestData)
+      .end((response) => {
+        if (response.error) {
+          console.log("1");
+          console.error("Error:", response.error);
+          res.status(500).json({ error: "Internal server error" });
+        } else {
+          console.log("Received response:", response.body);
+          res.json(response.body);
+        }
       });
   } catch (e) {
     console.log("2");
