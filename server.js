@@ -764,8 +764,6 @@ app.post("/AIQuiz", function (req, res) {
       .headers({ "Content-Type": "application/json" })
       .send(requestData)
       .end((response) => {
-        console.log(requestData);
-        console.log(response);
         if (response.error) {
           console.log("1");
           console.error("Error:", response.error);
