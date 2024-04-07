@@ -756,7 +756,7 @@ app.post("/AIQuiz", function (req, res) {
 
     const requestData = JSON.stringify({ image_data: imageData });
 
-    const url = "http://127.0.0.1:3001/AIQuiz";
+    const url = "http://localhost:3001/AIQuiz";
 
     unirest
       .post(url)
