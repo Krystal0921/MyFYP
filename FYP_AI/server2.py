@@ -44,6 +44,3 @@ with socketserver.TCPServer(("", PORT), MyRequestHandler) as httpd:
     httpd.serve_forever()
 
 
-
-
-

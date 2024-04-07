@@ -728,6 +728,32 @@ app.post("/GetFeedback", async function (req, res) {
 //     throw e;
 //   }
 // });
+const axios = require("axios");
+
+app.post("/AIQUiz", function (req, res) {
+  try {
+    console.log("Start AI Quiz API");
+    const imageData = req.body.image_data; // Get the image data from the request body
+
+    const requestData = JSON.stringify({ image_data: imageData });
+
+    const url = "http://44.221.91.193:3001/AIQuiz";
+
+    axios
+      .post(url, requestData)
+      .then((response) => {
+        console.log("Received response:", response.data);
+        res.json(response.data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  } catch (e) {
+    console.error("Error:", e);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 var server = app.listen(3000, function () {
   var host = server.address().address;
