@@ -761,7 +761,7 @@ app.post("/AIQuiz", function (req, res) {
 
     const requestData = JSON.stringify({ image_data: imageData });
 
-    const url = "localhost:3001/AIQuiz";
+    const url = "http://localhost:3001/AIQuiz";
 
     let retryAttempts = 0;
 
