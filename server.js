@@ -737,7 +737,7 @@ app.post("/AIQUiz", function (req, res) {
 
     const requestData = JSON.stringify({ image_data: imageData });
 
-    const url = "http://44.221.91.193:3001/AIQuiz";
+    const url = "http://127.0.0.1:3001/AIQuiz";
 
     axios
       .post(url, requestData)
@@ -746,10 +746,12 @@ app.post("/AIQUiz", function (req, res) {
         res.json(response.data);
       })
       .catch((error) => {
+        console.log("1");
         console.error("Error:", error);
         res.status(500).json({ error: "Internal server error" });
       });
   } catch (e) {
+    console.log("2");
     console.error("Error:", e);
     res.status(500).json({ error: "Internal server error" });
   }
