@@ -746,33 +746,52 @@ app.post("/GetFeedback", async function (req, res) {
 //     res.status(500).json({ error: "Internal server error" });
 //   }
 // });
-
 const unirest = require("unirest");
+
+const MAX_RETRY_ATTEMPTS = 3; // Maximum number of retry attempts
+const RETRY_DELAY_MS = 1000; // Delay in milliseconds between retries
 
 app.post("/AIQuiz", function (req, res) {
   try {
+    const currentDate = new Date();
+
     console.log("Start AI Quiz API");
+    console.log(currentDate);
     const imageData = req.body.image_data; // Get the image data from the request body
 
     const requestData = JSON.stringify({ image_data: imageData });
 
     const url = "http://localhost:3001/AIQuiz";
 
-    unirest
-      .post(url)
-      .timeout(30000) // Set timeout to 5 seconds (adjust as needed)
-      .headers({ "Content-Type": "application/json" })
-      .send(requestData)
-      .end((response) => {
-        if (response.error) {
-          console.log("1");
-          console.error("Error:", response.error);
-          res.status(500).json({ error: "Internal server error" });
-        } else {
-          console.log("Received response:", response.body);
-          res.json(response.body);
-        }
-      });
+    let retryAttempts = 0;
+
+    const makeRequest = () => {
+      unirest
+        .post(url)
+        .timeout(30000) // Set timeout to 30 seconds (adjust as needed)
+        .headers({ "Content-Type": "application/json" })
+        .send(requestData)
+        .end((response) => {
+          if (response.error) {
+            console.log("1");
+            console.error("Error:", response.error);
+            if (retryAttempts < MAX_RETRY_ATTEMPTS) {
+              // Retry the request after a delay
+              retryAttempts++;
+              console.log(`Retry attempt ${retryAttempts}`);
+              setTimeout(makeRequest, RETRY_DELAY_MS);
+            } else {
+              res.status(500).json({ error: "Internal server error" });
+            }
+          } else {
+            console.log(currentDate);
+            console.log("Received response:", response.body);
+            res.json(response.body);
+          }
+        });
+    };
+
+    makeRequest();
   } catch (e) {
     console.log("2");
     console.error("Error:", e);
