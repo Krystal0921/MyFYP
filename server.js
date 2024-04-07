@@ -760,10 +760,12 @@ app.post("/AIQuiz", function (req, res) {
 
     unirest
       .post(url)
-      .timeout(10000) // Set timeout to 5 seconds (adjust as needed)
+      .timeout(30000) // Set timeout to 5 seconds (adjust as needed)
       .headers({ "Content-Type": "application/json" })
       .send(requestData)
       .end((response) => {
+        console.log(requestData);
+        console.log(response);
         if (response.error) {
           console.log("1");
           console.error("Error:", response.error);
