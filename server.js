@@ -740,7 +740,7 @@ app.post("/AIQUiz", function (req, res) {
     const url = "http://127.0.0.1:3001/AIQuiz";
 
     axios
-      .post(url, requestData)
+      .post(url, requestData, { timeout: 5000 })
       .then((response) => {
         console.log("Received response:", response.data);
         res.json(response.data);
