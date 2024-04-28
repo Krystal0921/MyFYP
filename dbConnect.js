@@ -3,7 +3,7 @@ var connection = mysql.createConnection({
   host: "database-1.ckrrh0jhddra.us-east-1.rds.amazonaws.com",
   user: "admin",
   password: "password",
-  database: "fyp",
+  database: "project",
 });
 
 module.exports = connection;
